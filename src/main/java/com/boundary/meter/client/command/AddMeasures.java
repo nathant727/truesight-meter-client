@@ -38,11 +38,7 @@ public class AddMeasures extends VoidCommand {
                 .map(AddMeasures::toMeasureString)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public VoidResponse convertResponse(int id, JsonNode node) {
-        throw new IllegalArgumentException("should not happen");
-    }
+    
 
     @Override
     public String getMethod() {

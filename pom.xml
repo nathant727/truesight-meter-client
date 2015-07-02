@@ -103,4 +103,35 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>boundary-private</id>
+            <name>Boundary Private</name>
+            <url>http://maven.eng.boundary.com/artifactory/repo</url>
+        </repository>
+        <repository>
+            <id>maven.boundary.com</id>
+            <name>maven.boundary.com-releases</name>
+            <url>http://maven.boundary.com/artifactory/external</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>maven.cid1.boundary.com</id>
+            <name>maven.boundary.com-releases</name>
+            <url>http://maven.cid1.boundary.com/artifactory/internal</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven.cid1.boundary.com</id>
+            <name>maven.boundary.com-snapshots</name>
+            <url>http://maven.cid1.boundary.com/artifactory/internal</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@vcs.boundary.us-west-2/services/boundary-meter-client.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
 </project>
