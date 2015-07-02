@@ -16,7 +16,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 public class BoundaryNettyRpc implements AutoCloseable {
 
     private final MeterRpcHandler handler;
-    private final NioEventLoopGroup pool;
+    private final EventLoopGroup pool;
 
     private enum State {
         latent, connecting, connected, closed
@@ -48,14 +47,14 @@ public class BoundaryNettyRpc implements AutoCloseable {
     private final CountDownLatch connectedLatch = new CountDownLatch(1);
 
 
-    public BoundaryNettyRpc(HostAndPort meter) {
-        this.meter = requireNonNull(meter);
+    public BoundaryNettyRpc( BoundaryRpcClientConfig config, EventLoopGroup workerGroup) {
+        this.meter = requireNonNull(config.getMeter());
         this.handler =  new MeterRpcHandler(meter);
         pool = new NioEventLoopGroup();
-        this.bootstrap = createBootstrap(meter, handler, new NioEventLoopGroup());
+        this.bootstrap = createBootstrap(config, handler, workerGroup);
     }
 
-    private static Bootstrap createBootstrap(HostAndPort meter, MeterRpcHandler handler, EventLoopGroup workerGroup) {
+    private static Bootstrap createBootstrap(BoundaryRpcClientConfig config, MeterRpcHandler handler, EventLoopGroup workerGroup) {
 
         return new Bootstrap()
                 .group(requireNonNull(workerGroup))
@@ -63,9 +62,11 @@ public class BoundaryNettyRpc implements AutoCloseable {
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG)); // todo configurate
-                        ch.pipeline().addLast("json", new JsonObjectDecoder());
+                        if (config.isLoggingEnabled()) {
+                            ch.pipeline().addLast(new LoggingHandler(config.getLogLevel()));
 
+                        }
+                        ch.pipeline().addLast("jsonDecoder", new JsonObjectDecoder());
                         ch.pipeline().addLast(handler);
                     }
                 })

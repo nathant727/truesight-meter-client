@@ -3,7 +3,6 @@ package com.boundary.meter.client.rpc;
 import com.boundary.meter.client.model.Measure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,9 @@ public class MeterRpcHandlerTest {
 
     public static void main(String[] args) throws Exception {
 
-        BoundaryRpcMeterClient client = new BoundaryRpcMeterClient(HostAndPort.fromParts("localhost", 9192));
+        BoundaryRpcClientConfig config = new BoundaryRpcClientConfig();
+        config.setLoggingEnabled(true);
+        BoundaryRpcClient client = new BoundaryRpcClient(config);
         List<ListenableFuture<?>> futures = Lists.newArrayList();
         for (int i = 0; i < 10; i++) {
             futures.add(client.discovery());

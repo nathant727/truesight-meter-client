@@ -10,9 +10,10 @@ import com.boundary.meter.client.command.GetServiceListenersResponse;
 import com.boundary.meter.client.command.Response;
 import com.boundary.meter.client.command.VoidResponse;
 import com.boundary.meter.client.model.Measure;
-import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +28,9 @@ import java.util.function.Supplier;
  * Exposes the {@link com.boundary.meter.client.BoundaryMeterClient} api to clients
  * and manages creation/reconnection of underlying {@link BoundaryNettyRpc}
  */
-public class BoundaryRpcMeterClient implements BoundaryMeterClient {
+public class BoundaryRpcClient implements BoundaryMeterClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BoundaryRpcMeterClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoundaryRpcClient.class);
 
     private final Supplier<BoundaryNettyRpc> rpcFactory;
     private final AtomicBoolean connectionPending = new AtomicBoolean(false);
@@ -37,9 +38,11 @@ public class BoundaryRpcMeterClient implements BoundaryMeterClient {
     private final ExecutorService executor;
     private volatile BoundaryNettyRpc rpc;
 
-    public BoundaryRpcMeterClient(HostAndPort meter) throws Exception {
 
-        this.rpcFactory = () -> new BoundaryNettyRpc(meter);
+    public BoundaryRpcClient(BoundaryRpcClientConfig config) throws Exception {
+
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        this.rpcFactory = () -> new BoundaryNettyRpc(config, workerGroup);
         executor = Executors.newSingleThreadExecutor();
         this.rpc = rpcFactory.get();
         rpc.connect();

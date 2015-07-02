@@ -8,7 +8,6 @@ public class GetServiceListenersResponse implements Response {
     private final JsonNode node;
 
     public GetServiceListenersResponse(int id, JsonNode node) {
-
         this.id = id;
         this.node = node;
     }

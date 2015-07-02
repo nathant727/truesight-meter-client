@@ -2,6 +2,7 @@ package com.boundary.meter.client.rpc;
 
 import com.boundary.meter.client.Json;
 import com.boundary.meter.client.command.Command;
+import com.boundary.meter.client.command.Identified;
 import com.boundary.meter.client.command.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -75,11 +76,11 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
         }
 
         final int id = this.idRef.getAndIncrement();
-        command = command.withId(id);
-        LOGGER.debug("sendCommand: {}", command);
+        final Identified<T> identified = new Identified<>(command, id);
+        LOGGER.debug("sendCommand: {}", identified);
         final SettableFuture<T> future = SettableFuture.create();
-        pendingRequestsById.put(id, new CommandAndFuture<>(command, future));
-        writeToChannel(ctx.channel(), command).addListener(new ChannelFutureListener() {
+        pendingRequestsById.put(id, new CommandAndFuture<>(identified, future));
+        writeToChannel(ctx.channel(), identified).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (!channelFuture.isSuccess()) {
@@ -93,11 +94,8 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
     }
 
 
-
-
-
-    private ChannelFuture writeToChannel(Channel channel, Command cmd) throws JsonProcessingException {
-        ByteBuf buf = Unpooled.wrappedBuffer(mapper.writeValueAsBytes(cmd)).order(ByteOrder.LITTLE_ENDIAN);
+    private ChannelFuture writeToChannel(Channel channel, Identified identified) throws JsonProcessingException {
+        ByteBuf buf = Unpooled.wrappedBuffer(mapper.writeValueAsBytes(identified)).order(ByteOrder.LITTLE_ENDIAN);
         return channel.writeAndFlush(buf);
     }
 
@@ -119,7 +117,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                     final CommandAndFuture caf = pendingRequestsById.remove(id);
                     if (caf != null) {
                         try {
-                            Object response = caf.command.convertResponse(id, tree);
+                            Object response = caf.identified.getCommand().convertResponse(id, tree);
                             if (buf.isReadable()) {
                                 LOGGER.error("{}: Failed to read complete message: {}", meter, ByteBufUtil.hexDump(buf));
                             }
@@ -137,17 +135,15 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
         } else {
             ctx.fireChannelRead(msg);
         }
-
-
     }
 
     private class CommandAndFuture<T extends Response> {
 
-        private final Command<T> command;
+        private final Identified<T> identified;
         private final SettableFuture<T> future;
 
-        public CommandAndFuture(Command<T> command, SettableFuture<T> future) {
-            this.command = command;
+        public CommandAndFuture(Identified<T> identified, SettableFuture<T> future) {
+            this.identified = identified;
             this.future = future;
         }
     }

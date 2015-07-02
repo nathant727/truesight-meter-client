@@ -5,7 +5,6 @@ public class Measure {
     private final double value;
 
     public Measure(String name, double value) {
-
         this.name = name;
         this.value = value;
     }

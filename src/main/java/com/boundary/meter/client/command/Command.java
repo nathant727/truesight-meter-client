@@ -12,12 +12,7 @@ public interface Command<T extends Response> {
     @JsonIgnore
     T convertResponse(int id, JsonNode node);
 
-    @JsonIgnore
-    Command<T> withId(int id);
-
     String getMethod();
-
-    int getId();
 
     default String getJsonrpc() {
         return "2.0";
