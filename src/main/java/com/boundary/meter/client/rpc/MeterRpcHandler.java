@@ -1,0 +1,154 @@
+package com.boundary.meter.client.rpc;
+
+import com.boundary.meter.client.Json;
+import com.boundary.meter.client.command.Command;
+import com.boundary.meter.client.command.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.ByteOrder;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.Objects.requireNonNull;
+
+public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeterRpcHandler.class);
+
+    private final AtomicReference<ChannelHandlerContext> ctxRef = new AtomicReference<>();
+    private final AtomicInteger idRef = new AtomicInteger(0);
+    private final ConcurrentMap<Integer, CommandAndFuture> pendingRequestsById = new ConcurrentHashMap<>();
+
+    private final HostAndPort meter;
+    private final ObjectMapper mapper;
+
+
+    public MeterRpcHandler(HostAndPort meter) {
+        this.meter = requireNonNull(meter);
+        this.mapper = Json.MAPPER;
+    }
+
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.info("{}: added {}", meter, ctx);
+        ctxRef.set(ctx);
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.info("{}: removed {}", meter, ctx);
+        ctxRef.set(null);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOGGER.error("{}: exceptionCaught: {}", meter, ctx, cause);
+        ctx.fireExceptionCaught(cause);
+        ctx.close();
+    }
+
+    public <T extends Response> ListenableFuture<T> sendCommand(Command<T> command) throws DisconnectedException, JsonProcessingException {
+        final ChannelHandlerContext ctx = ctxRef.get();
+        if (ctx == null) {
+            throw new DisconnectedException("nullContext",  command);
+        }
+
+        final int id = this.idRef.getAndIncrement();
+        command = command.withId(id);
+        LOGGER.debug("sendCommand: {}", command);
+        final SettableFuture<T> future = SettableFuture.create();
+        pendingRequestsById.put(id, new CommandAndFuture<>(command, future));
+        writeToChannel(ctx.channel(), command).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if (!channelFuture.isSuccess()) {
+                    LOGGER.debug("Request id {} operation completed unsuccessfully {}", id, channelFuture.cause());
+                    future.setException(channelFuture.cause());
+                }
+                pendingRequestsById.remove(id);
+            }
+        });
+        return future;
+    }
+
+
+
+
+
+    private ChannelFuture writeToChannel(Channel channel, Command cmd) throws JsonProcessingException {
+        ByteBuf buf = Unpooled.wrappedBuffer(mapper.writeValueAsBytes(cmd)).order(ByteOrder.LITTLE_ENDIAN);
+        return channel.writeAndFlush(buf);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+
+        LOGGER.info("Message received: {}/{}", msg.getClass(), msg.toString());
+
+        if (msg instanceof ByteBuf) {
+            final ByteBuf buf = ((ByteBuf) msg);
+
+            try {
+                // todo: look into a streaming data parser here if needed for speed
+                JsonNode tree = mapper.readTree( new ByteBufInputStream(buf) );
+                JsonNode idField = tree.get("id");
+                if (idField != null) {
+                    int id = idField.asInt();
+                    final CommandAndFuture caf = pendingRequestsById.remove(id);
+                    if (caf != null) {
+                        try {
+                            Object response = caf.command.convertResponse(id, tree);
+                            if (buf.isReadable()) {
+                                LOGGER.error("{}: Failed to read complete message: {}", meter, ByteBufUtil.hexDump(buf));
+                            }
+                            caf.future.set(response);
+                        } catch(Exception e) {
+                            caf.future.setException(e);
+                        }
+                    }
+                }
+
+            } finally {
+                ReferenceCountUtil.release(buf);
+            }
+
+        } else {
+            ctx.fireChannelRead(msg);
+        }
+
+
+    }
+
+    private class CommandAndFuture<T extends Response> {
+
+        private final Command<T> command;
+        private final SettableFuture<T> future;
+
+        public CommandAndFuture(Command<T> command, SettableFuture<T> future) {
+            this.command = command;
+            this.future = future;
+        }
+    }
+}
