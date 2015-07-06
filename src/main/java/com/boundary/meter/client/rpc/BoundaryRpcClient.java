@@ -10,14 +10,13 @@ import com.boundary.meter.client.command.GetServiceListenersResponse;
 import com.boundary.meter.client.command.Response;
 import com.boundary.meter.client.command.VoidResponse;
 import com.boundary.meter.client.model.Measure;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -50,21 +49,21 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
     }
 
     @Override
-    public ListenableFuture<VoidResponse> addMeasures(List<Measure> measures) {
+    public CompletableFuture<VoidResponse> addMeasures(List<Measure> measures) {
         return send(new AddMeasures(measures));
     }
 
     @Override
-    public ListenableFuture<DiscoveryResponse> discovery() {
+    public CompletableFuture<DiscoveryResponse> discovery() {
         return send(Discovery.INSTANCE);
     }
 
     @Override
-    public ListenableFuture<GetServiceListenersResponse> getServiceListeners() {
+    public CompletableFuture<GetServiceListenersResponse> getServiceListeners() {
         return send(GetServiceListeners.INSTANCE);
     }
 
-    private <T extends Response> ListenableFuture<T> send(Command<T> command) {
+    private <T extends Response> CompletableFuture<T> send(Command<T> command) {
 
         try {
             if (!connected()) {
@@ -73,8 +72,8 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
             return rpc.sendCommand(command);
         } catch (Exception e) {
             tryReconnect();
-            SettableFuture<T> exFuture = SettableFuture.create();
-            exFuture.setException(e);
+            CompletableFuture<T> exFuture = new CompletableFuture<>();
+            exFuture.completeExceptionally(e);
             return exFuture;
         }
     }

@@ -8,8 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HostAndPort;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufUtil;
@@ -24,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteOrder;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,7 +68,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
         ctx.close();
     }
 
-    public <T extends Response> ListenableFuture<T> sendCommand(Command<T> command) throws DisconnectedException, JsonProcessingException {
+    public <T extends Response> CompletableFuture<T> sendCommand(Command<T> command) throws DisconnectedException, JsonProcessingException {
         final ChannelHandlerContext ctx = ctxRef.get();
         if (ctx == null) {
             throw new DisconnectedException("nullContext",  command);
@@ -78,14 +77,14 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
         final int id = this.idRef.getAndIncrement();
         final Identified<T> identified = new Identified<>(command, id);
         LOGGER.debug("sendCommand: {}", identified);
-        final SettableFuture<T> future = SettableFuture.create();
+        final CompletableFuture<T> future = new CompletableFuture<>();
         pendingRequestsById.put(id, new CommandAndFuture<>(identified, future));
         writeToChannel(ctx.channel(), identified).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (!channelFuture.isSuccess()) {
                     LOGGER.debug("Request id {} operation completed unsuccessfully {}", id, channelFuture.cause());
-                    future.setException(channelFuture.cause());
+                    future.completeExceptionally(channelFuture.cause());
                 }
                 pendingRequestsById.remove(id);
             }
@@ -121,9 +120,9 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                             if (buf.isReadable()) {
                                 LOGGER.error("{}: Failed to read complete message: {}", meter, ByteBufUtil.hexDump(buf));
                             }
-                            caf.future.set(response);
+                            caf.future.complete(response);
                         } catch(Exception e) {
-                            caf.future.setException(e);
+                            caf.future.completeExceptionally(e);
                         }
                     }
                 }
@@ -140,9 +139,9 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
     private class CommandAndFuture<T extends Response> {
 
         private final Identified<T> identified;
-        private final SettableFuture<T> future;
+        private final CompletableFuture<T> future;
 
-        public CommandAndFuture(Identified<T> identified, SettableFuture<T> future) {
+        public CommandAndFuture(Identified<T> identified, CompletableFuture<T> future) {
             this.identified = identified;
             this.future = future;
         }

@@ -6,7 +6,6 @@ import com.boundary.meter.client.command.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Throwables;
 import com.google.common.net.HostAndPort;
-import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -20,6 +19,7 @@ import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -112,7 +112,7 @@ public class BoundaryNettyRpc implements AutoCloseable {
         return false;
     }
 
-    public <T extends Response> ListenableFuture<T> sendCommand(Command<T> command) {
+    public <T extends Response> CompletableFuture<T> sendCommand(Command<T> command) {
         if (isClosed()) {
             throw new IllegalStateException(meter.toString() + ": Client closed");
         }
