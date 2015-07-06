@@ -3,11 +3,11 @@ package com.boundary.meter.client.rpc;
 import com.boundary.meter.client.model.Measure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ListenableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +23,7 @@ public class MeterRpcHandlerTest {
         BoundaryRpcClientConfig config = new BoundaryRpcClientConfig();
         config.setLoggingEnabled(true);
         BoundaryRpcClient client = new BoundaryRpcClient(config);
-        List<ListenableFuture<?>> futures = Lists.newArrayList();
+        List<CompletableFuture<?>> futures = Lists.newArrayList();
         for (int i = 0; i < 10; i++) {
             futures.add(client.discovery());
         }
@@ -56,7 +56,7 @@ public class MeterRpcHandlerTest {
                 }, 0, 1, TimeUnit.SECONDS);
 
 
-        for (ListenableFuture<?> future : futures) {
+        for (CompletableFuture<?> future : futures) {
             LOGGER.info(future.get().toString());
         }
 

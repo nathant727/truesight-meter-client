@@ -4,15 +4,15 @@ import com.boundary.meter.client.command.DiscoveryResponse;
 import com.boundary.meter.client.command.GetServiceListenersResponse;
 import com.boundary.meter.client.command.VoidResponse;
 import com.boundary.meter.client.model.Measure;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface BoundaryMeterClient extends AutoCloseable {
 
-    ListenableFuture<VoidResponse> addMeasures(List<Measure> metrics);
+    CompletableFuture<VoidResponse> addMeasures(List<Measure> metrics);
 
-    ListenableFuture<DiscoveryResponse> discovery();
+    CompletableFuture<DiscoveryResponse> discovery();
 
-    ListenableFuture<GetServiceListenersResponse> getServiceListeners();
+    CompletableFuture<GetServiceListenersResponse> getServiceListeners();
 }
