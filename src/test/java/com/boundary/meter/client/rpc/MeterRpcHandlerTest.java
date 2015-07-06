@@ -1,6 +1,8 @@
 package com.boundary.meter.client.rpc;
 
-import com.boundary.meter.client.model.Measure;
+import com.boundary.meter.client.model.Event;
+import com.boundary.meter.client.model.ImmutableEvent;
+import com.boundary.meter.client.model.ImmutableMeasure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -12,7 +14,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
-import java.util.stream.DoubleStream;
 
 public class MeterRpcHandlerTest {
 
@@ -24,6 +25,14 @@ public class MeterRpcHandlerTest {
         config.setLoggingEnabled(true);
         BoundaryRpcClient client = new BoundaryRpcClient(config);
         List<CompletableFuture<?>> futures = Lists.newArrayList();
+
+        Event e = ImmutableEvent.builder()
+                .title("rpcHandler test starting (no message)")
+                .message("rpcHandler test is starting")
+                .build();
+
+        client.addEvent(e);
+
         for (int i = 0; i < 10; i++) {
             futures.add(client.discovery());
         }
@@ -32,8 +41,6 @@ public class MeterRpcHandlerTest {
             futures.add(client.getServiceListeners());
         }
 
-        DoubleStream.iterate(0, (a) -> a + .1);
-
         DoubleSupplier ds = new DoubleSupplier() {
             double current = 0;
             @Override
@@ -41,17 +48,30 @@ public class MeterRpcHandlerTest {
                 return current+=.05;
             }
         };
+
+        Event e2 =  ImmutableEvent.builder()
+                .title("arrayed - event 0")
+                .type(Event.Type.warn)
+                .build();
+
+        Event e3 =  ImmutableEvent.builder()
+                .title("arrayed - event 1")
+                .message("with a message")
+                .build();
+
+        client.addEvents(ImmutableList.of(e2,e3));
+
         CountDownLatch done = new CountDownLatch(5000);
         Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(() -> {
                     double val =  ds.getAsDouble();
                     client.addMeasures(
                             ImmutableList.of(
-                                    new Measure("foo.bar", Math.sin(val))
-                                    ,new Measure("bar.foo", -Math.sin(val))
-                                    ,new Measure("bar.baz",  val)
+                                    ImmutableMeasure.of("foo.bar", Math.sin(val))
+                                    ,ImmutableMeasure.of("bar.foo", -Math.sin(val))
                             )
                     );
+                    client.addMeasure(ImmutableMeasure.of("bar.baz",  val));
                     done.countDown();
                 }, 0, 1, TimeUnit.SECONDS);
 

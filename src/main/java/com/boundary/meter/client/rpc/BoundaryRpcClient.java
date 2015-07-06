@@ -1,6 +1,7 @@
 package com.boundary.meter.client.rpc;
 
 import com.boundary.meter.client.BoundaryMeterClient;
+import com.boundary.meter.client.command.AddEvents;
 import com.boundary.meter.client.command.AddMeasures;
 import com.boundary.meter.client.command.Command;
 import com.boundary.meter.client.command.Discovery;
@@ -9,6 +10,7 @@ import com.boundary.meter.client.command.GetServiceListeners;
 import com.boundary.meter.client.command.GetServiceListenersResponse;
 import com.boundary.meter.client.command.Response;
 import com.boundary.meter.client.command.VoidResponse;
+import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.Measure;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -51,6 +53,21 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
     @Override
     public CompletableFuture<VoidResponse> addMeasures(List<Measure> measures) {
         return send(new AddMeasures(measures));
+    }
+
+    @Override
+    public CompletableFuture<VoidResponse> addMeasure(Measure measure) {
+        return send(new AddMeasures(measure));
+    }
+
+    @Override
+    public CompletableFuture<VoidResponse> addEvents(List<Event> events) {
+        return send(new AddEvents(events));
+    }
+
+    @Override
+    public CompletableFuture<VoidResponse> addEvent(Event event) {
+        return send(new AddEvents(event));
     }
 
     @Override
