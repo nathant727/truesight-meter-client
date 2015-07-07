@@ -1,29 +1,14 @@
 package com.boundary.meter.client.model;
 
-public class Measure {
-    private final String name;
-    private final double value;
+import org.immutables.value.Value;
 
-    public Measure(String name, double value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return "Measure{" +
-                "name='" + name + '\'' +
-                ", value=" + value +
-                '}';
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
+/**
+ * Immutable representation of a single measurement
+ */
+@Value.Immutable
+public abstract class Measure {
+    @Value.Parameter
+    public abstract String name();
+    @Value.Parameter
+    public abstract double value();
 }

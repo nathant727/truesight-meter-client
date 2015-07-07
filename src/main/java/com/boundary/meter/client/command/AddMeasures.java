@@ -29,7 +29,7 @@ public class AddMeasures extends VoidCommand {
 
 
     private  static String toMeasureString(Measure measure) {
-        return String.format(MEASURE_DATA_FORMAT, measure.getName(), measure.getValue());
+        return String.format(MEASURE_DATA_FORMAT, measure.name(), measure.value());
     }
 
     private static List<String> toMeasureArrayString(List<Measure> measures) {
