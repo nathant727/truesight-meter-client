@@ -23,11 +23,11 @@ public abstract class Event {
     @Value.Default
     public Type type() {
         return Type.info;
-    };
+    }
     @Value.Default
     public Instant timestamp() {
         return Instant.now();
-    };
+    }
     public abstract Optional<String> message();
     public abstract Optional<String> source();
     public abstract ImmutableSet<String> tags();
