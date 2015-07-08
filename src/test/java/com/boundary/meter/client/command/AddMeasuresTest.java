@@ -6,7 +6,9 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AddMeasuresTest {
@@ -14,10 +16,14 @@ public class AddMeasuresTest {
     @Test
     public void testAddMeasures() {
 
-        Measure m = ImmutableMeasure.of("the-measure", 44.2);
+        Measure m = ImmutableMeasure.builder()
+                .name("the-measure")
+                .value(44.2)
+                .build();
         AddMeasures am = new AddMeasures(m);
 
         String data = (String) am.getParams().get("data");
+        System.out.println(data);
 
         validateMeasureString(m, data);
     }
@@ -25,8 +31,15 @@ public class AddMeasuresTest {
     @Test
     public void testAddMeasureList() {
 
-        Measure m0 = ImmutableMeasure.of("the-measure", 44.2);
-        Measure m1 = ImmutableMeasure.of("the-other-measure", 34.2);
+        Measure m0 = ImmutableMeasure.builder()
+                .name("the-measure")
+                .value(44.2)
+                .build();
+        Measure m1 = ImmutableMeasure.builder()
+                .name("the-other-measure")
+                .value(34.2)
+                .source("another_source")
+                .build();
         AddMeasures am = new AddMeasures(ImmutableList.of(m0, m1));
 
         @SuppressWarnings("unchecked")
@@ -37,9 +50,24 @@ public class AddMeasuresTest {
 
     }
 
+    private void validateOptionalMeasureString(Optional<String> optional, String id, String measureString) {
+        if (optional.isPresent()) {
+            assertTrue(measureStringContains(measureString, id, optional.get()));
+        } else {
+            assertFalse(measureStringContains(measureString, id, ""));
+        }
+    }
+
+    private boolean measureStringContains(String measureString, String id, String data) {
+        return measureString.contains("|" + id + ":" + data.replaceAll("\\|", "\\\\|"));
+    }
 
     private void validateMeasureString(Measure m, String data) {
-        assertTrue(data.startsWith("_bmetric:" + m.name()));
-        assertTrue(data.contains("|v:" + m.value()));
+        assertTrue(data.startsWith("_bmetric:" + m.name().toUpperCase()));
+        assertTrue(data.contains("v:" + m.value()));
+        assertTrue(data.contains("t:" + m.timestamp().getEpochSecond()));
+
+        System.out.println(m.toString());
+        validateOptionalMeasureString(m.source(), "s", data);
     }
 }
