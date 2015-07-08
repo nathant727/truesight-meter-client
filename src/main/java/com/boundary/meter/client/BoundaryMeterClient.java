@@ -1,8 +1,6 @@
 package com.boundary.meter.client;
 
-import com.boundary.meter.client.command.DiscoveryResponse;
-import com.boundary.meter.client.command.GetServiceListenersResponse;
-import com.boundary.meter.client.command.VoidResponse;
+import com.boundary.meter.client.command.*;
 import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.Measure;
 
@@ -20,6 +18,10 @@ public interface BoundaryMeterClient extends AutoCloseable {
     CompletableFuture<VoidResponse> addEvent(Event event);
 
     CompletableFuture<DiscoveryResponse> discovery();
+
+    CompletableFuture<DebugResponse> debug();
+
+    CompletableFuture<SystemInformationResponse> systemInformation();
 
     CompletableFuture<GetServiceListenersResponse> getServiceListeners();
 }
