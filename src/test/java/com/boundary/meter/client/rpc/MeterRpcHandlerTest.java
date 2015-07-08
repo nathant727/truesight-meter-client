@@ -67,11 +67,17 @@ public class MeterRpcHandlerTest {
                     double val =  ds.getAsDouble();
                     client.addMeasures(
                             ImmutableList.of(
-                                    ImmutableMeasure.of("foo.bar", Math.sin(val))
-                                    ,ImmutableMeasure.of("bar.foo", -Math.sin(val))
+                                    ImmutableMeasure.builder()
+                                            .name("foo.bar")
+                                            .value(Math.sin(val)).build()
+                                    ,ImmutableMeasure.builder()
+                                            .name("bar.foo")
+                                            .value(-Math.sin(val)).build()
                             )
                     );
-                    client.addMeasure(ImmutableMeasure.of("bar.baz",  val));
+                    client.addMeasure(ImmutableMeasure.builder()
+                                        .name("bar.baz")
+                                        .value(val).build());
                     done.countDown();
                 }, 0, 1, TimeUnit.SECONDS);
 
