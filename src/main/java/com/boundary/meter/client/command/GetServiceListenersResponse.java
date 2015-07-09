@@ -1,27 +1,36 @@
 package com.boundary.meter.client.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.immutables.value.Value;
 
-public class GetServiceListenersResponse implements Response {
+@Value.Immutable
+public abstract class GetServiceListenersResponse implements Response {
 
-    private final int id;
-    private final JsonNode node;
+    public abstract String status();
+    public abstract JsonNode listeners();
 
-    public GetServiceListenersResponse(int id, JsonNode node) {
-        this.id = id;
-        this.node = node;
+    public static GetServiceListenersResponse of(int id, JsonNode resp) {
+        JsonNode result = resp.get("result");
+        if (result.get("status").asText().equalsIgnoreCase("OK")) {
+            return ImmutableGetServiceListenersResponse.builder()
+                    .id(id)
+                    .status("OK")
+                    .listeners(result.get("app_listeners"))
+                    .build();
+        } else {
+            return ImmutableGetServiceListenersResponse.builder()
+                    .id(id)
+                    .status(result.get("status").asText())
+                    .build();
+        }
     }
 
     @Override
     public String toString() {
         return "GetServiceListenersResponse{" +
-                "id=" + id +
-                ", node=" + node +
+                "id=" + id() +
+                ", listeners=" + listeners() +
                 '}';
     }
 
-    @Override
-    public int getId() {
-        return id;
-    }
 }

@@ -11,9 +11,13 @@ public class GetServiceListeners implements Command<GetServiceListenersResponse>
 
     }
 
+    public static GetServiceListeners of() {
+        return INSTANCE;
+    }
+
     @Override
     public GetServiceListenersResponse convertResponse(int id, JsonNode node) {
-        return new GetServiceListenersResponse(id, node);
+        return GetServiceListenersResponse.of(id, node);
     }
 
     @Override

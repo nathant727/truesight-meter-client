@@ -1,5 +1,6 @@
 package com.boundary.meter.client.command;
 
+import com.boundary.meter.client.model.ImmutableMeasure;
 import com.boundary.meter.client.model.Measure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -47,11 +48,18 @@ public class AddMeasures extends VoidCommand {
     }
 
 
+    public static AddMeasures of(Measure measure) {
+        return new AddMeasures(measure);
+    }
 
     public AddMeasures(List<Measure> measures) {
         this(ImmutableMap.of("data", toMeasureArrayString(measures)));
     }
 
+
+    public static AddMeasures of(List<Measure> measures) {
+        return new AddMeasures(measures);
+    }
 
     private static List<String> toMeasureArrayString(List<Measure> measures) {
 

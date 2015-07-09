@@ -11,9 +11,13 @@ public class Discovery implements Command<DiscoveryResponse> {
         // singleton
     }
 
+    public static Discovery of() {
+        return INSTANCE;
+    }
+
     @Override
     public DiscoveryResponse convertResponse(int id, JsonNode node) {
-        return new DiscoveryResponse(id, node);
+        return DiscoveryResponse.of(id, node);
     }
 
     @Override

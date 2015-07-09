@@ -7,26 +7,25 @@ import com.google.common.collect.ImmutableMap;
  * JSON RPC call to modify debug levels
  */
 public class Debug implements Command<DebugResponse> {
-    public final static Debug INSTANCE = new Debug();
-
-    private Debug() {
-        // singleton
-    }
 
     private ImmutableMap<String, Object> params;
 
-    public void setParams(String section, int level) {
-        this.params.putIfAbsent("section", section);
-        this.params.putIfAbsent("level", level);
+
+    public Debug(String section, int level) {
+        this(ImmutableMap.of("section", section, "level", level));
     }
 
-    public void setParams(ImmutableMap<String, Object> params) {
+    public Debug(ImmutableMap<String, Object> params) {
         this.params = params;
+    }
+
+    public static Debug of(String section, int level) {
+        return new Debug(section, level);
     }
 
     @Override
     public DebugResponse convertResponse(int id, JsonNode node) {
-        return new DebugResponse(id, node);
+        return DebugResponse.factory(id, node);
     }
 
     @Override

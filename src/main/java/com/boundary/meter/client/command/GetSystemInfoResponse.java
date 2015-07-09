@@ -10,7 +10,7 @@ import java.util.Iterator;
  */
 
 @Value.Immutable
-public abstract class SystemInformationResponse implements Response {
+public abstract class GetSystemInfoResponse implements Response {
 
     public abstract String meterVersion();
     public abstract String hostname();
@@ -22,7 +22,6 @@ public abstract class SystemInformationResponse implements Response {
     public abstract String version();
     public abstract String vendname();
     public abstract String patch();
-    public abstract int id();
     public abstract JsonNode cpus();
     public abstract JsonNode filesystems();
     public abstract JsonNode memory();
@@ -30,9 +29,9 @@ public abstract class SystemInformationResponse implements Response {
     public abstract JsonNode packages();
     public abstract JsonNode listeners();
 
-    public static SystemInformationResponse factory(int id, JsonNode resp) {
+    public static GetSystemInfoResponse of(int id, JsonNode resp) {
         JsonNode result = resp.get("result");
-        return ImmutableSystemInformationResponse.builder()
+        return ImmutableGetSystemInfoResponse.builder()
                 .id(id)
                 .meterVersion(result.get("meter_version").asText())
                 .hostname(result.get("hostname").asText())
@@ -56,7 +55,7 @@ public abstract class SystemInformationResponse implements Response {
 
     @Override
     public String toString() {
-        String returnVal = "SystemInformationResponse{" +
+        String returnVal = "GetSystemInfoResponse{" +
                 "meterVersion='" + meterVersion() + '\'' +
                 ", Host='" + hostname() + '\'' +
                 ", Architecture='" + arch() + '\'' +
@@ -204,8 +203,4 @@ public abstract class SystemInformationResponse implements Response {
         return returnVal;
     }
 
-    @Override
-    public int getId() {
-        return id();
-    }
 }
