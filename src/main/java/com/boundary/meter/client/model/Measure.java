@@ -22,6 +22,38 @@ public abstract class Measure {
     }
     public abstract Optional<String> source();
 
+    public static Measure of(String name, double value) {
+        return ImmutableMeasure.builder()
+                .name(name)
+                .value(value)
+                .build();
+    }
+
+    public static Measure of(String name, double value, Instant timestamp) {
+        return ImmutableMeasure.builder()
+                .name(name)
+                .value(value)
+                .timestamp(timestamp)
+                .build();
+    }
+
+    public static Measure of(String name, double value, String source) {
+        return ImmutableMeasure.builder()
+                .name(name)
+                .value(value)
+                .source(source)
+                .build();
+    }
+
+    public static Measure of(String name, double value, Instant timestamp, String source) {
+        return ImmutableMeasure.builder()
+                .name(name)
+                .value(value)
+                .timestamp(timestamp)
+                .source(source)
+                .build();
+    }
+
     @Value.Check
     protected void check() {
         checkArgument(name().getBytes().length <= 100, "Metric name length must not be > 100 bytes");

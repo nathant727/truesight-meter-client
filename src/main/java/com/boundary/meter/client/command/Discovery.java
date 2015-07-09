@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class Discovery implements Command<DiscoveryResponse> {
 
-    public final static Discovery INSTANCE = new Discovery();
+    private final static Discovery INSTANCE = new Discovery();
 
     private Discovery() {
         // singleton

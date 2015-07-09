@@ -14,19 +14,16 @@ public abstract class GetProcessInfoResponse implements Response {
     public abstract JsonNode processes();
 
     public static GetProcessInfoResponse of(int id, JsonNode resp) {
+        ImmutableGetProcessInfoResponse.Builder infoBuilder = ImmutableGetProcessInfoResponse.builder();
         JsonNode result = resp.get("result");
 
+        infoBuilder.id(id);
+        infoBuilder.status(result.get("status").asText());
         if (result.get("status").asText().equalsIgnoreCase("OK")) {
-            return ImmutableGetProcessInfoResponse.builder()
-                    .id(id)
-                    .status("OK")
-                    .processes(result.get("processes"))
-                    .build();
-        } else {
-            return ImmutableGetProcessInfoResponse.builder()
-                    .id(id)
-                    .status(result.get("status").asText())
-                    .build();
+            if (result.has("processes")) {
+                infoBuilder.processes(result.get("processes"));
+            }
         }
+        return infoBuilder.build();
     }
 }

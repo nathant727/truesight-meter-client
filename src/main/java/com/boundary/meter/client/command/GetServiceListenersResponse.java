@@ -10,19 +10,17 @@ public abstract class GetServiceListenersResponse implements Response {
     public abstract JsonNode listeners();
 
     public static GetServiceListenersResponse of(int id, JsonNode resp) {
+        ImmutableGetServiceListenersResponse.Builder listenerBuilder = ImmutableGetServiceListenersResponse.builder();
         JsonNode result = resp.get("result");
+
+        listenerBuilder.id(id);
+        listenerBuilder.status(result.get("status").asText());
         if (result.get("status").asText().equalsIgnoreCase("OK")) {
-            return ImmutableGetServiceListenersResponse.builder()
-                    .id(id)
-                    .status("OK")
-                    .listeners(result.get("app_listeners"))
-                    .build();
-        } else {
-            return ImmutableGetServiceListenersResponse.builder()
-                    .id(id)
-                    .status(result.get("status").asText())
-                    .build();
+            if (result.has("app_listeners")) {
+                listenerBuilder.listeners(result.get("app_listeners"));
+            }
         }
+        return listenerBuilder.build();
     }
 
     @Override

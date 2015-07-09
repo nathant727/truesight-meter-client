@@ -15,14 +15,17 @@ public abstract class QueryMetricResponse implements Response {
     public abstract JsonNode metrics();
 
     public static QueryMetricResponse of(int id, JsonNode resp) {
-
+        ImmutableQueryMetricResponse.Builder metricBuilder = ImmutableQueryMetricResponse.builder();
         JsonNode result = resp.get("result");
-        return ImmutableQueryMetricResponse.builder()
-                .id(id)
-                .status(result.get("status").asText())
-                .metrics(result.get("query_metric"))
-                .build();
 
+        metricBuilder.id(id);
+        metricBuilder.status(result.get("status").asText());
+        if (result.get("status").asText().equalsIgnoreCase("OK")) {
+            if (result.has("query_metric")) {
+                metricBuilder.metrics(result.get("query_metric"));
+            }
+        }
+        return metricBuilder.build();
     }
 
     @Override

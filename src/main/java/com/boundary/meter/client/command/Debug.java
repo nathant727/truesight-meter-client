@@ -10,17 +10,12 @@ public class Debug implements Command<DebugResponse> {
 
     private ImmutableMap<String, Object> params;
 
-
-    public Debug(String section, int level) {
-        this(ImmutableMap.of("section", section, "level", level));
-    }
-
     public Debug(ImmutableMap<String, Object> params) {
         this.params = params;
     }
 
     public static Debug of(String section, int level) {
-        return new Debug(section, level);
+        return new Debug(ImmutableMap.of("section", section, "level", level));
     }
 
     @Override

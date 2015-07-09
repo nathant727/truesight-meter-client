@@ -15,33 +15,24 @@ public class GetProcessInfo implements Command<GetProcessInfoResponse> {
     }
     private ImmutableMap<String, Object> params;
 
-    public GetProcessInfo(String expression, Type type) {
-        this(ImmutableMap.of(type.toString(), expression));
+    public GetProcessInfo(ImmutableMap<String, Object> params) {
+        this.params = params;
     }
 
     public static GetProcessInfo of(String expression, Type type) {
-        return new GetProcessInfo(expression, type);
-    }
-
-    public GetProcessInfo(String expression, Type type,
-                          Optional<String> expression2, Optional<Type> type2,
-                          Optional<String> expression3, Optional<Type> type3) {
-        this(ImmutableMap.of(type.toString(), expression, type2.toString(), expression2, type3.toString(), expression3));
+        return new GetProcessInfo(ImmutableMap.of(type.toString(), expression));
     }
 
     public static GetProcessInfo of(String expression, Type type,
                                     Optional<String> expression2, Optional<Type> type2,
                                     Optional<String> expression3, Optional<Type> type3) {
-        return new GetProcessInfo(expression, type, expression2, type2, expression3, type3);
-    }
-
-    public GetProcessInfo(ImmutableMap<String, Object> params) {
-        this.params = params;
+        return new GetProcessInfo(ImmutableMap.of(type.toString(), expression,
+                type2.toString(), expression2,
+                type3.toString(), expression3));
     }
 
     @Override
     public GetProcessInfoResponse convertResponse(int id, JsonNode node) {
-
         return GetProcessInfoResponse.of(id, node);
     }
 

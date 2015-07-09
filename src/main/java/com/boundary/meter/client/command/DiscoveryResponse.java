@@ -4,21 +4,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.immutables.value.Value;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 @Value.Immutable
 public abstract class DiscoveryResponse implements Response {
 
     public abstract String meterVersion();
-    public abstract JsonNode methods();
+    public abstract Optional<JsonNode> methods();
 
     public static DiscoveryResponse of(int id, JsonNode resp) {
-
+        ImmutableDiscoveryResponse.Builder discoveryBuilder = ImmutableDiscoveryResponse.builder();
         JsonNode result = resp.get("result");
-        return ImmutableDiscoveryResponse.builder()
-                .id(id)
-                .meterVersion(result.get("meter_version").asText())
-                .methods(result.get("methods"))
-                .build();
+
+        discoveryBuilder.id(id);
+        if (result.has("meter_version")) {
+            discoveryBuilder.meterVersion(result.get("meter_version").asText());
+        }
+        if (result.has("methods")) {
+            discoveryBuilder.methods(result.get("methods"));
+        }
+
+        return discoveryBuilder.build();
 
     }
 
@@ -27,8 +33,8 @@ public abstract class DiscoveryResponse implements Response {
         String returnVal = "DiscoveryResponse{" +
                 "meterVersion='" + meterVersion() + '\'' +
                 ", id=" + id();
-        if (methods().isArray()) {
-            Iterator<JsonNode> ite = methods().elements();
+        if (methods().get().isArray()) {
+            Iterator<JsonNode> ite = methods().get().elements();
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode method = ite.next();

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class GetServiceListeners implements Command<GetServiceListenersResponse> {
 
 
-    public static final GetServiceListeners INSTANCE = new GetServiceListeners();
+    private static final GetServiceListeners INSTANCE = new GetServiceListeners();
 
     public GetServiceListeners() {
 

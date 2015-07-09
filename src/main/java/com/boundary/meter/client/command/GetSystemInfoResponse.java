@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.immutables.value.Value;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Read and parse response from System Information JSON RPC call
@@ -14,43 +15,78 @@ public abstract class GetSystemInfoResponse implements Response {
 
     public abstract String meterVersion();
     public abstract String hostname();
-    public abstract String mach();
-    public abstract String osver();
-    public abstract String machdesc();
-    public abstract String osname();
-    public abstract String arch();
-    public abstract String version();
-    public abstract String vendname();
-    public abstract String patch();
-    public abstract JsonNode cpus();
-    public abstract JsonNode filesystems();
-    public abstract JsonNode memory();
-    public abstract JsonNode interfaces();
-    public abstract JsonNode packages();
-    public abstract JsonNode listeners();
+    public abstract Optional<String> mach();
+    public abstract Optional<String> osver();
+    public abstract Optional<String> machdesc();
+    public abstract Optional<String> osname();
+    public abstract Optional<String> arch();
+    public abstract Optional<String> version();
+    public abstract Optional<String> vendname();
+    public abstract Optional<String> patch();
+    public abstract Optional<JsonNode> cpus();
+    public abstract Optional<JsonNode> filesystems();
+    public abstract Optional<JsonNode> memory();
+    public abstract Optional<JsonNode> interfaces();
+    public abstract Optional<JsonNode> packages();
+    public abstract Optional<JsonNode> listeners();
 
     public static GetSystemInfoResponse of(int id, JsonNode resp) {
+        ImmutableGetSystemInfoResponse.Builder infoBuilder = ImmutableGetSystemInfoResponse.builder();
         JsonNode result = resp.get("result");
-        return ImmutableGetSystemInfoResponse.builder()
-                .id(id)
-                .meterVersion(result.get("meter_version").asText())
-                .hostname(result.get("hostname").asText())
-                .mach(result.get("mach").asText())
-                .osver(result.get("osver").asText())
-                .machdesc(result.get("machdesc").asText())
-                .osname(result.get("osname").asText())
-                .arch(result.get("arch").asText())
-                .version(result.get("version").asText())
-                .vendname(result.get("vendname").asText())
-                .patch(result.get("patch").asText())
-                .cpus(result.get("cpus"))
-                .filesystems(result.get("filesystems"))
-                .memory(result.get("memory"))
-                .interfaces(result.get("interfaces"))
-                .packages(result.get("discovered_packages"))
-                .listeners(result.get("app_listeners"))
-                .build();
 
+        infoBuilder.id(id);
+        if (result.has("system_info")) {
+            JsonNode system_info = result.get("system_info");
+            if (system_info.has("meter_version")) {
+                infoBuilder.meterVersion(result.get("meter_version").asText());
+            }
+            if (system_info.has("hostname")) {
+                infoBuilder.hostname(result.get("hostname").asText());
+            }
+            if (system_info.has("mach")) {
+                infoBuilder.mach(result.get("mach").asText());
+            }
+            if (system_info.has("osver")) {
+                infoBuilder.osver(result.get("osver").asText());
+            }
+            if (system_info.has("machdesc")) {
+                infoBuilder.machdesc(result.get("machdesc").asText());
+            }
+            if (system_info.has("osname")) {
+                infoBuilder.osname(result.get("osname").asText());
+            }
+            if (system_info.has("arch")) {
+                infoBuilder.arch(result.get("arch").asText());
+            }
+            if (system_info.has("version")) {
+                infoBuilder.version(result.get("version").asText());
+            }
+            if (system_info.has("vendname")) {
+                infoBuilder.vendname(result.get("vendname").asText());
+            }
+            if (system_info.has("patch")) {
+                infoBuilder.patch(result.get("patch").asText());
+            }
+            if (system_info.has("cpus")) {
+                infoBuilder.cpus(result.get("cpus"));
+            }
+            if (system_info.has("filesystems")) {
+                infoBuilder.filesystems(result.get("filesystems"));
+            }
+            if (system_info.has("memory")) {
+                infoBuilder.memory(result.get("memory"));
+            }
+            if (system_info.has("interfaces")) {
+                infoBuilder.interfaces(result.get("interfaces"));
+            }
+            if (system_info.has("discovered_packages")) {
+                infoBuilder.packages(result.get("discovered_packages"));
+            }
+            if (system_info.has("app_listeners")) {
+                infoBuilder.listeners(result.get("app_listeners"));
+            }
+        }
+        return infoBuilder.build();
     }
 
     @Override
@@ -67,8 +103,8 @@ public abstract class GetSystemInfoResponse implements Response {
                 ", OS Vendor Name='" + vendname() + '\'' +
                 ", OS Patch Level='" + patch() + '\'';
 
-        if (cpus().isArray()) {
-            Iterator<JsonNode> ite = cpus().elements();
+        if (cpus().get().isArray()) {
+            Iterator<JsonNode> ite = cpus().get().elements();
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode cpu = ite.next();
@@ -92,8 +128,8 @@ public abstract class GetSystemInfoResponse implements Response {
         } else {
             returnVal = returnVal + ", CPUs=" + cpus();
         }
-        if (filesystems().isArray()) {
-            Iterator<JsonNode> ite = filesystems().elements();
+        if (filesystems().get().isArray()) {
+            Iterator<JsonNode> ite = filesystems().get().elements();
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode filesystem = ite.next();
@@ -111,13 +147,13 @@ public abstract class GetSystemInfoResponse implements Response {
         } else {
             returnVal = returnVal + ", Filesystems=" + filesystems();
         }
-        if (!memory().isNull()) {
+        if (!memory().get().isNull()) {
 
-            returnVal = ", Memory Installed='" + memory().get("installed") + '\'' +
-                    ", Usable Memory='" + memory().get("usable") + '\'';
+            returnVal = ", Memory Installed='" + memory().get().get("installed") + '\'' +
+                    ", Usable Memory='" + memory().get().get("usable") + '\'';
         }
-        if (interfaces().isArray()) {
-            Iterator<JsonNode> ite = interfaces().elements();
+        if (interfaces().get().isArray()) {
+            Iterator<JsonNode> ite = interfaces().get().elements();
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode networkInterface = ite.next();
@@ -167,8 +203,8 @@ public abstract class GetSystemInfoResponse implements Response {
         } else {
             returnVal = returnVal + ", Interfaces='" + interfaces() + '\'';
         }
-        if (packages().isArray()) {
-            Iterator<JsonNode> ite = packages().elements();
+        if (packages().get().isArray()) {
+            Iterator<JsonNode> ite = packages().get().elements();
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode discoveredPackage = ite.next();
@@ -182,8 +218,8 @@ public abstract class GetSystemInfoResponse implements Response {
         } else {
             returnVal = returnVal + ", Discovered Packages='" + packages() + '\'';
         }
-        if (listeners().isArray()) {
-            Iterator<JsonNode> ite = listeners().elements();
+        if (listeners().get().isArray()) {
+            Iterator<JsonNode> ite = listeners().get().elements();
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode listener = ite.next();

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * JSON RPC call to retrieve and
  */
 public class GetSystemInfo implements Command<GetSystemInfoResponse> {
-    public final static GetSystemInfo INSTANCE = new GetSystemInfo();
+    private final static GetSystemInfo INSTANCE = new GetSystemInfo();
 
     private GetSystemInfo() {
         // singleton

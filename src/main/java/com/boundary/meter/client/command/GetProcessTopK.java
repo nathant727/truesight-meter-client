@@ -14,26 +14,18 @@ public class GetProcessTopK implements Command<GetProcessTopKResponse> {
 
     private ImmutableMap<String, Object> params;
 
-    public GetProcessTopK(int number, Type type) {
-        this(ImmutableMap.of(type.toString(), number));
-    }
-
-    public static GetProcessTopK of(int number, Type type) {
-        return new GetProcessTopK(number, type);
-    }
-
-    public GetProcessTopK(int number, Type type, int number2, Type type2) {
-        this(ImmutableMap.of(type.toString(), number, type2.toString(), number2));
-    }
-
-    public static GetProcessTopK of(int number, Type type, int number2, Type type2) {
-        return new GetProcessTopK(number, type, number2, type2);
-    }
-    
     public GetProcessTopK(ImmutableMap<String, Object> params) {
         this.params = params;
     }
 
+    public static GetProcessTopK of(int number, Type type) {
+        return new GetProcessTopK(ImmutableMap.of(type.toString(), number));
+    }
+
+    public static GetProcessTopK of(int number, Type type, int number2, Type type2) {
+        return new GetProcessTopK(ImmutableMap.of(type.toString(), number, type2.toString(), number2));
+    }
+    
     @Override
     public GetProcessTopKResponse convertResponse(int id, JsonNode node) {
         return GetProcessTopKResponse.of(id, node);

@@ -35,6 +35,99 @@ public abstract class Event {
     public abstract Optional<String> ad();
     public abstract Optional<String> sender();
 
+    public static Event of(String title) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .build();
+    }
+
+    public static Event of(String title, Type type) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .type(type)
+                .build();
+    }
+
+    public static Event of(String title, Instant timestamp) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .timestamp(timestamp)
+                .build();
+    }
+
+    public static Event of(String title, Type type, Instant timestamp) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .type(type)
+                .timestamp(timestamp)
+                .build();
+    }
+
+    public static Event of(String title, Optional<String> message,
+                           Optional<String> source, ImmutableSet<String> tags,
+                           Optional<String> at, Optional<String> ad,
+                           Optional<String> sender) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .message(message)
+                .source(source)
+                .tags(tags)
+                .at(at)
+                .ad(ad)
+                .sender(sender)
+                .build();
+    }
+
+    public static Event of(String title, Type type,
+                           Instant timestamp, Optional<String> message,
+                           Optional<String> source, ImmutableSet<String> tags,
+                           Optional<String> at, Optional<String> ad,
+                           Optional<String> sender) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .type(type)
+                .timestamp(timestamp)
+                .message(message)
+                .source(source)
+                .tags(tags)
+                .at(at)
+                .ad(ad)
+                .sender(sender)
+                .build();
+    }
+
+    public static Event of(String title, Type type, Optional<String> message,
+                           Optional<String> source, ImmutableSet<String> tags,
+                           Optional<String> at, Optional<String> ad,
+                           Optional<String> sender) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .type(type)
+                .message(message)
+                .source(source)
+                .tags(tags)
+                .at(at)
+                .ad(ad)
+                .sender(sender)
+                .build();
+    }
+
+    public static Event of(String title, Instant timestamp, Optional<String> message,
+                           Optional<String> source, ImmutableSet<String> tags,
+                           Optional<String> at, Optional<String> ad,
+                           Optional<String> sender) {
+        return ImmutableEvent.builder()
+                .title(title)
+                .timestamp(timestamp)
+                .message(message)
+                .source(source)
+                .tags(tags)
+                .at(at)
+                .ad(ad)
+                .sender(sender)
+                .build();
+    }
+
     @Value.Check
     protected void check() {
         checkArgument(title().getBytes().length <= 255, "Title length must not be > 255 bytes");

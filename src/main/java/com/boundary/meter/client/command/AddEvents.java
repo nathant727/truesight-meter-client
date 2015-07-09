@@ -43,26 +43,16 @@ public class AddEvents extends VoidCommand {
 
     private final ImmutableMap<String, Object> params;
 
-    public AddEvents(Event event) {
-        this(ImmutableMap.of("data", toEventString(event)));
-    }
-
-    public static AddEvents of(Event event) {
-        return new AddEvents(event);
-    }
-
     public AddEvents(ImmutableMap<String, Object> params) {
         this.params = params;
     }
 
-
-
-    public AddEvents(List<Event> events) {
-        this(ImmutableMap.of("data", toEventArrayString(events)));
+    public static AddEvents of(Event event) {
+        return new AddEvents(ImmutableMap.of("data", toEventString(event)));
     }
 
     public static AddEvents of(List<Event> events) {
-        return new AddEvents(events);
+        return new AddEvents(ImmutableMap.of("data", toEventArrayString(events)));
     }
 
     private static List<String> toEventArrayString(List<Event> events) {

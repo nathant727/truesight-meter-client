@@ -18,38 +18,23 @@ public abstract class GetProcessTopKResponse implements Response {
     public abstract Optional<JsonNode> mem_topk();
 
     public static GetProcessTopKResponse of(int id, JsonNode resp) {
+        ImmutableGetProcessTopKResponse.Builder topkBuilder = ImmutableGetProcessTopKResponse.builder();
         JsonNode result = resp.get("result");
 
+        topkBuilder.id(id);
+        topkBuilder.status(result.get("status").asText());
         if (result.get("status").asText().equalsIgnoreCase("OK")) {
-            JsonNode processes = result.get("processes");
+            if (result.has("processes")) {
+                JsonNode processes = result.get("processes");
 
-            if (processes.has("cpu_topk")) {
-                if (processes.has("mem_topk")) {
-                    return ImmutableGetProcessTopKResponse.builder()
-                            .id(id)
-                            .status("OK")
-                            .cpu_topk(processes.get("cpu_topk"))
-                            .mem_topk(processes.get("mem_topk"))
-                            .build();
-                } else {
-                    return ImmutableGetProcessTopKResponse.builder()
-                            .id(id)
-                            .status("OK")
-                            .cpu_topk(processes.get("cpu_topk"))
-                            .build();
+                if (processes.has("cpu_topk")) {
+                    topkBuilder.cpu_topk(processes.get("cpu_topk"));
                 }
-            } else {
-                return ImmutableGetProcessTopKResponse.builder()
-                        .id(id)
-                        .status("OK")
-                        .mem_topk(processes.get("mem_topk"))
-                        .build();
+                if (processes.has("mem_topk")) {
+                    topkBuilder.mem_topk(processes.get("mem_topk"));
+                }
             }
-        } else {
-            return ImmutableGetProcessTopKResponse.builder()
-                    .id(id)
-                    .status(result.get("status").asText())
-                    .build();
         }
+        return topkBuilder.build();
     }
 }

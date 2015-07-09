@@ -39,35 +39,23 @@ public class AddMeasures extends VoidCommand {
 
     private final ImmutableMap<String, Object> params;
 
-    public AddMeasures(Measure measure) {
-        this(ImmutableMap.of("data", toMeasureString(measure)));
-    }
-
     public AddMeasures(ImmutableMap<String, Object> params) {
         this.params = params;
     }
 
-
     public static AddMeasures of(Measure measure) {
-        return new AddMeasures(measure);
+        return new AddMeasures(ImmutableMap.of("data", toMeasureString(measure)));
     }
-
-    public AddMeasures(List<Measure> measures) {
-        this(ImmutableMap.of("data", toMeasureArrayString(measures)));
-    }
-
 
     public static AddMeasures of(List<Measure> measures) {
-        return new AddMeasures(measures);
+        return new AddMeasures(ImmutableMap.of("data", toMeasureArrayString(measures)));
     }
 
     private static List<String> toMeasureArrayString(List<Measure> measures) {
-
         return measures
                 .stream()
                 .map(AddMeasures::toMeasureString)
                 .collect(toList());
-
     }
 
     private static String toMeasureString(Measure measure) {
