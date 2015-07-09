@@ -84,9 +84,9 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (!channelFuture.isSuccess()) {
                     LOGGER.debug("Request id {} operation completed unsuccessfully {}", id, channelFuture.cause());
+                    pendingRequestsById.remove(id);
                     future.completeExceptionally(channelFuture.cause());
                 }
-                pendingRequestsById.remove(id);
             }
         });
         return future;
