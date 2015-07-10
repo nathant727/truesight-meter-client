@@ -20,7 +20,7 @@ public class AddMeasuresTest {
                 .name("the-measure")
                 .value(44.2)
                 .build();
-        AddMeasures am = new AddMeasures(m);
+        AddMeasures am = AddMeasures.of(m);
 
         String data = (String) am.getParams().get("data");
         System.out.println(data);
@@ -40,7 +40,7 @@ public class AddMeasuresTest {
                 .value(34.2)
                 .source("another_source")
                 .build();
-        AddMeasures am = new AddMeasures(ImmutableList.of(m0, m1));
+        AddMeasures am = AddMeasures.of(ImmutableList.of(m0, m1));
 
         @SuppressWarnings("unchecked")
         List<String> data = (List<String>) am.getParams().get("data");
