@@ -33,9 +33,9 @@ public class GetProcessTopK implements Command<GetProcessTopKResponse> {
     public static GetProcessTopK of(TypedNumber number1, TypedNumber ... optional) {
         ImmutableMap.Builder<String, Object> paramsBuilder = ImmutableMap.builder();
 
-        paramsBuilder.put(number1.type().toString(), number1.number());
+        paramsBuilder.put(number1.type().name(), number1.number());
         for (TypedNumber number: optional) {
-            paramsBuilder.put(number.type().toString(), number.number());
+            paramsBuilder.put(number.type().name(), number.number());
         }
         return new GetProcessTopK(paramsBuilder.build());
     }

@@ -32,10 +32,10 @@ public class GetProcessInfo implements Command<GetProcessInfoResponse> {
     public static GetProcessInfo of(TypedExpression expression1, TypedExpression ... optional) {
         ImmutableMap.Builder<String, Object> paramsBuilder = ImmutableMap.builder();
 
-        paramsBuilder.put(expression1.type().toString(), expression1.expression());
+        paramsBuilder.put(expression1.type().name(), expression1.expression());
 
         for (TypedExpression expression: optional) {
-            paramsBuilder.put(expression.type().toString(), expression.expression());
+            paramsBuilder.put(expression.type().name(), expression.expression());
         }
         return new GetProcessInfo(paramsBuilder.build());
     }
