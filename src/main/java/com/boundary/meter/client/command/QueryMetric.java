@@ -27,4 +27,10 @@ public class QueryMetric implements Command<QueryMetricResponse> {
     public String getMethod() {
         return "query_metric";
     }
+
+    @Override
+    public ImmutableMap<String, Object> getParams() {
+        return this.params;
+    }
+
 }

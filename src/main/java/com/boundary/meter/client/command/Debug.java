@@ -3,6 +3,8 @@ package com.boundary.meter.client.command;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Map;
+
 /**
  * JSON RPC call to modify debug levels
  */
@@ -26,5 +28,10 @@ public class Debug implements Command<DebugResponse> {
     @Override
     public String getMethod() {
         return "debug";
+    }
+
+    @Override
+    public ImmutableMap<String, Object> getParams() {
+        return this.params;
     }
 }

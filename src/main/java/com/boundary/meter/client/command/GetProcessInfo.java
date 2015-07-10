@@ -2,33 +2,42 @@ package com.boundary.meter.client.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
-
-import java.util.Optional;
+import org.immutables.value.Value;
 
 /**
  * JSON RPC call to retrieve and parse Running Process Information
  */
 
 public class GetProcessInfo implements Command<GetProcessInfoResponse> {
-    public enum Type {
-        process, args_expr, cwd_expr
+
+    @Value.Immutable
+    public static abstract class TypedExpression {
+        public enum Type {
+            process, args_expr, cwd_expr
+        }
+
+        @Value.Default
+        public Type type() {
+            return Type.process;
+        }
+        public abstract String expression();
     }
+
     private ImmutableMap<String, Object> params;
 
     public GetProcessInfo(ImmutableMap<String, Object> params) {
         this.params = params;
     }
 
-    public static GetProcessInfo of(String expression, Type type) {
-        return new GetProcessInfo(ImmutableMap.of(type.toString(), expression));
-    }
+    public static GetProcessInfo of(TypedExpression expression1, TypedExpression ... optional) {
+        ImmutableMap.Builder<String, Object> paramsBuilder = ImmutableMap.builder();
 
-    public static GetProcessInfo of(String expression, Type type,
-                                    Optional<String> expression2, Optional<Type> type2,
-                                    Optional<String> expression3, Optional<Type> type3) {
-        return new GetProcessInfo(ImmutableMap.of(type.toString(), expression,
-                type2.toString(), expression2,
-                type3.toString(), expression3));
+        paramsBuilder.put(expression1.type().toString(), expression1.expression());
+
+        for (TypedExpression expression: optional) {
+            paramsBuilder.put(expression.type().toString(), expression.expression());
+        }
+        return new GetProcessInfo(paramsBuilder.build());
     }
 
     @Override
@@ -39,5 +48,10 @@ public class GetProcessInfo implements Command<GetProcessInfoResponse> {
     @Override
     public String getMethod() {
         return "get_process_info";
+    }
+
+    @Override
+    public ImmutableMap<String, Object> getParams() {
+        return this.params;
     }
 }

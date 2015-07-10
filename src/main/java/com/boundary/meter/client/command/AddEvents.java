@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -102,7 +101,7 @@ public class AddEvents extends VoidCommand {
     }
 
     @Override
-    public Map<String, Object> getParams() {
+    public ImmutableMap<String, Object> getParams() {
         return this.params;
     }
 

@@ -2,14 +2,26 @@ package com.boundary.meter.client.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
+import org.immutables.value.Value;
 
 /**
  * JSON RPC call to retrieve and parse TopK Running Process Information
  */
 
 public class GetProcessTopK implements Command<GetProcessTopKResponse> {
-    public enum Type {
-        cpu, mem
+
+
+    @Value.Immutable
+    public static abstract class TypedNumber {
+        public enum Type {
+            cpu, mem
+        }
+
+        @Value.Default
+        public Type type() {
+            return Type.cpu;
+        }
+        public abstract int number();
     }
 
     private ImmutableMap<String, Object> params;
@@ -18,12 +30,14 @@ public class GetProcessTopK implements Command<GetProcessTopKResponse> {
         this.params = params;
     }
 
-    public static GetProcessTopK of(int number, Type type) {
-        return new GetProcessTopK(ImmutableMap.of(type.toString(), number));
-    }
+    public static GetProcessTopK of(TypedNumber number1, TypedNumber ... optional) {
+        ImmutableMap.Builder<String, Object> paramsBuilder = ImmutableMap.builder();
 
-    public static GetProcessTopK of(int number, Type type, int number2, Type type2) {
-        return new GetProcessTopK(ImmutableMap.of(type.toString(), number, type2.toString(), number2));
+        paramsBuilder.put(number1.type().toString(), number1.number());
+        for (TypedNumber number: optional) {
+            paramsBuilder.put(number.type().toString(), number.number());
+        }
+        return new GetProcessTopK(paramsBuilder.build());
     }
     
     @Override
@@ -35,4 +49,10 @@ public class GetProcessTopK implements Command<GetProcessTopKResponse> {
     public String getMethod() {
         return "get_process_topk";
     }
+
+    @Override
+    public ImmutableMap<String, Object> getParams() {
+        return this.params;
+    }
+
 }

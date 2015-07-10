@@ -80,26 +80,13 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
     }
 
     @Override
-    public CompletableFuture<GetProcessInfoResponse> getProcessInfo(String expression, GetProcessInfo.Type type) {
-        return send(GetProcessInfo.of(expression, type));
+    public CompletableFuture<GetProcessInfoResponse> getProcessInfo(GetProcessInfo.TypedExpression expression, GetProcessInfo.TypedExpression ... optional) {
+        return send(GetProcessInfo.of(expression, optional));
     }
 
     @Override
-    public CompletableFuture<GetProcessInfoResponse> getProcessInfo(String expression, GetProcessInfo.Type type,
-                                                           Optional<String> expression2, Optional<GetProcessInfo.Type> type2,
-                                                           Optional<String> expression3, Optional<GetProcessInfo.Type> type3) {
-        return send(GetProcessInfo.of(expression, type, expression2, type2, expression3, type3));
-    }
-
-    @Override
-    public CompletableFuture<GetProcessTopKResponse> getProcessTopK(int number, GetProcessTopK.Type type) {
-        return send(GetProcessTopK.of(number, type));
-    }
-
-    @Override
-    public CompletableFuture<GetProcessTopKResponse> getProcessTopK(int number, GetProcessTopK.Type type,
-                                                                    int number2, GetProcessTopK.Type type2) {
-        return send(GetProcessTopK.of(number, type, number2, type2));
+    public CompletableFuture<GetProcessTopKResponse> getProcessTopK(GetProcessTopK.TypedNumber number, GetProcessTopK.TypedNumber ... optional) {
+        return send(GetProcessTopK.of(number, optional));
     }
 
     @Override

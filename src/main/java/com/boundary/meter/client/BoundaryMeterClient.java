@@ -26,15 +26,9 @@ public interface BoundaryMeterClient extends AutoCloseable {
 
     CompletableFuture<QueryMetricResponse> queryMetric(String metric, boolean Exact);
 
-    CompletableFuture<GetProcessInfoResponse> getProcessInfo(String expression, GetProcessInfo.Type type);
+    CompletableFuture<GetProcessInfoResponse> getProcessInfo(GetProcessInfo.TypedExpression expression, GetProcessInfo.TypedExpression ... optional);
 
-    CompletableFuture<GetProcessInfoResponse> getProcessInfo(String expression, GetProcessInfo.Type type,
-                                                             Optional<String> expression2, Optional<GetProcessInfo.Type> type2,
-                                                             Optional<String> expression3, Optional<GetProcessInfo.Type> type3);
-
-    CompletableFuture<GetProcessTopKResponse> getProcessTopK(int number, GetProcessTopK.Type type);
-
-    CompletableFuture<GetProcessTopKResponse> getProcessTopK(int number, GetProcessTopK.Type type, int number2, GetProcessTopK.Type type2);
+    CompletableFuture<GetProcessTopKResponse> getProcessTopK(GetProcessTopK.TypedNumber number, GetProcessTopK.TypedNumber ... optional);
 
     CompletableFuture<GetServiceListenersResponse> getServiceListeners();
 }
