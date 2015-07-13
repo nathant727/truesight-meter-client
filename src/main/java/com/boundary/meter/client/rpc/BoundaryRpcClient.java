@@ -1,15 +1,7 @@
 package com.boundary.meter.client.rpc;
 
 import com.boundary.meter.client.BoundaryMeterClient;
-import com.boundary.meter.client.command.AddEvents;
-import com.boundary.meter.client.command.AddMeasures;
-import com.boundary.meter.client.command.Command;
-import com.boundary.meter.client.command.Discovery;
-import com.boundary.meter.client.command.DiscoveryResponse;
-import com.boundary.meter.client.command.GetServiceListeners;
-import com.boundary.meter.client.command.GetServiceListenersResponse;
-import com.boundary.meter.client.command.Response;
-import com.boundary.meter.client.command.VoidResponse;
+import com.boundary.meter.client.command.*;
 import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.Measure;
 import io.netty.channel.EventLoopGroup;
@@ -18,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,32 +45,78 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
 
     @Override
     public CompletableFuture<VoidResponse> addMeasures(List<Measure> measures) {
-        return send(new AddMeasures(measures));
+        return send(AddMeasures.of(measures));
     }
 
     @Override
     public CompletableFuture<VoidResponse> addMeasure(Measure measure) {
-        return send(new AddMeasures(measure));
+        return send(AddMeasures.of(measure));
     }
 
     @Override
     public CompletableFuture<VoidResponse> addEvents(List<Event> events) {
-        return send(new AddEvents(events));
+        return send(AddEvents.of(events));
     }
 
     @Override
     public CompletableFuture<VoidResponse> addEvent(Event event) {
-        return send(new AddEvents(event));
+        return send(AddEvents.of(event));
     }
 
     @Override
     public CompletableFuture<DiscoveryResponse> discovery() {
-        return send(Discovery.INSTANCE);
+        return send(Discovery.of());
+    }
+
+    @Override
+    public CompletableFuture<GetSystemInfoResponse> systemInformation() {
+        return send(GetSystemInfo.of());
+    }
+
+
+    @Override
+    public CompletableFuture<DebugResponse> debug(String section, int level) {
+        return send(Debug.of(section, level));
+    }
+
+    @Override
+    public CompletableFuture<GetProcessInfoResponse> getProcessInfo(GetProcessInfo.TypedExpression expression, GetProcessInfo.TypedExpression ... optional) {
+        return send(GetProcessInfo.of(expression, optional));
+    }
+
+    @Override
+    public CompletableFuture<GetProcessTopKResponse> getProcessTopK(GetProcessTopK.TypedNumber number, GetProcessTopK.TypedNumber ... optional) {
+        return send(GetProcessTopK.of(number, optional));
+    }
+
+    @Override
+    public CompletableFuture<QueryMetricResponse> queryMetric(String metric, boolean Exact) {
+        return send(QueryMetric.of(metric, Exact));
     }
 
     @Override
     public CompletableFuture<GetServiceListenersResponse> getServiceListeners() {
-        return send(GetServiceListeners.INSTANCE);
+        return send(GetServiceListeners.of());
+    }
+
+    @Override
+    public CompletableFuture<GetProbeIntervalResponse> getProbeInterval(GetProbeInterval.Type probe) {
+        return send(GetProbeInterval.of(probe));
+    }
+
+    @Override
+    public CompletableFuture<SetProbeIntervalResponse> setProbeInterval(GetProbeInterval.Type probe, long ms) {
+        return send(SetProbeInterval.of(probe, ms));
+    }
+
+    @Override
+    public CompletableFuture<SetEnabledMetricsResponse> setEnabledMetrics(SetEnabledMetrics.Type type, boolean enabled) {
+        return send(SetEnabledMetrics.of(type, enabled));
+    }
+
+    @Override
+    public CompletableFuture<SetAPIIntervalsResponse> setAPIIntervals(SetAPIIntervals.TypedInterval interval, SetAPIIntervals.TypedInterval ... optional) {
+        return send(SetAPIIntervals.of(interval, optional));
     }
 
     private <T extends Response> CompletableFuture<T> send(Command<T> command) {

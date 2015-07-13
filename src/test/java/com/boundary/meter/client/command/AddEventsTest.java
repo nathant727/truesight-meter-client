@@ -25,7 +25,7 @@ public class AddEventsTest {
         Event e = defaultEvent()
                 .build();
 
-        AddEvents ae = new AddEvents(e);
+        AddEvents ae = AddEvents.of(e);
 
         assertThat(ae.getMethod(), is("event"));
         Map<String, Object> params = ae.getParams();
@@ -47,7 +47,7 @@ public class AddEventsTest {
                 .title("event 2")
                 .build();
 
-        AddEvents ae = new AddEvents(ImmutableList.of(e0, e1));
+        AddEvents ae = AddEvents.of(ImmutableList.of(e0, e1));
 
         assertThat(ae.getMethod(), is("event"));
         Map<String, Object> params = ae.getParams();
