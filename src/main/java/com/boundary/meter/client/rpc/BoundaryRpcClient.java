@@ -99,6 +99,26 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
         return send(GetServiceListeners.of());
     }
 
+    @Override
+    public CompletableFuture<GetProbeIntervalResponse> getProbeInterval(GetProbeInterval.Type probe) {
+        return send(GetProbeInterval.of(probe));
+    }
+
+    @Override
+    public CompletableFuture<SetProbeIntervalResponse> setProbeInterval(GetProbeInterval.Type probe, long ms) {
+        return send(SetProbeInterval.of(probe, ms));
+    }
+
+    @Override
+    public CompletableFuture<SetEnabledMetricsResponse> setEnabledMetrics(SetEnabledMetrics.Type type, boolean enabled) {
+        return send(SetEnabledMetrics.of(type, enabled));
+    }
+
+    @Override
+    public CompletableFuture<SetAPIIntervalsResponse> setAPIIntervals(SetAPIIntervals.TypedInterval interval, SetAPIIntervals.TypedInterval ... optional) {
+        return send(SetAPIIntervals.of(interval, optional));
+    }
+
     private <T extends Response> CompletableFuture<T> send(Command<T> command) {
 
         try {

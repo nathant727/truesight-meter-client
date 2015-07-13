@@ -22,7 +22,7 @@ public class Debug implements Command<DebugResponse> {
 
     @Override
     public DebugResponse convertResponse(int id, JsonNode node) {
-        return DebugResponse.factory(id, node);
+        return DebugResponse.of(id, node);
     }
 
     @Override

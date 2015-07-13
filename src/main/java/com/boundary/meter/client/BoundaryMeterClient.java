@@ -30,5 +30,13 @@ public interface BoundaryMeterClient extends AutoCloseable {
 
     CompletableFuture<GetProcessTopKResponse> getProcessTopK(GetProcessTopK.TypedNumber number, GetProcessTopK.TypedNumber ... optional);
 
+    CompletableFuture<GetProbeIntervalResponse> getProbeInterval(GetProbeInterval.Type probe);
+
+    CompletableFuture<SetProbeIntervalResponse> setProbeInterval(GetProbeInterval.Type probe, long ms);
+
+    CompletableFuture<SetEnabledMetricsResponse> setEnabledMetrics(SetEnabledMetrics.Type type, boolean enabled);
+
+    CompletableFuture<SetAPIIntervalsResponse> setAPIIntervals(SetAPIIntervals.TypedInterval interval, SetAPIIntervals.TypedInterval ... optional);
+
     CompletableFuture<GetServiceListenersResponse> getServiceListeners();
 }
