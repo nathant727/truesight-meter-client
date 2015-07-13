@@ -46,7 +46,7 @@ public class SetAPIIntervals implements Command<SetAPIIntervalsResponse> {
 
     @Override
     public String getMethod() {
-        return "get_process_topk";
+        return "set_api_intervals";
     }
 
     @Override
