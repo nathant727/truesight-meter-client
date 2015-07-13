@@ -5,15 +5,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class Discovery implements Command<DiscoveryResponse> {
 
-    public final static Discovery INSTANCE = new Discovery();
+    private final static Discovery INSTANCE = new Discovery();
 
     private Discovery() {
         // singleton
     }
 
+    public static Discovery of() {
+        return INSTANCE;
+    }
+
     @Override
     public DiscoveryResponse convertResponse(int id, JsonNode node) {
-        return new DiscoveryResponse(id, node);
+        return DiscoveryResponse.of(id, node);
     }
 
     @Override

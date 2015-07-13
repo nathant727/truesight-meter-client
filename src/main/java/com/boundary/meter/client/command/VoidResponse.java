@@ -1,15 +1,14 @@
 package com.boundary.meter.client.command;
 
-public class VoidResponse implements Response{
+import org.immutables.value.Value;
 
-    private final int id;
+@Value.Immutable
+public abstract class VoidResponse implements Response {
 
-    public VoidResponse(int id) {
-        this.id = id;
+    public static VoidResponse of(int id) {
+        return ImmutableVoidResponse.builder()
+                .id(id)
+                .build();
     }
 
-    @Override
-    public int getId() {
-        return id;
-    }
 }

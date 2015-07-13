@@ -5,15 +5,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class GetServiceListeners implements Command<GetServiceListenersResponse> {
 
 
-    public static final GetServiceListeners INSTANCE = new GetServiceListeners();
+    private static final GetServiceListeners INSTANCE = new GetServiceListeners();
 
     public GetServiceListeners() {
 
     }
 
+    public static GetServiceListeners of() {
+        return INSTANCE;
+    }
+
     @Override
     public GetServiceListenersResponse convertResponse(int id, JsonNode node) {
-        return new GetServiceListenersResponse(id, node);
+        return GetServiceListenersResponse.of(id, node);
     }
 
     @Override

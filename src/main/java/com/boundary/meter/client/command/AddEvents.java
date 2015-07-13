@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -43,20 +42,17 @@ public class AddEvents extends VoidCommand {
 
     private final ImmutableMap<String, Object> params;
 
-    public AddEvents(Event event) {
-        this(ImmutableMap.of("data", toEventString(event)));
-    }
-
     public AddEvents(ImmutableMap<String, Object> params) {
         this.params = params;
     }
 
-
-
-    public AddEvents(List<Event> events) {
-        this(ImmutableMap.of("data", toEventArrayString(events)));
+    public static AddEvents of(Event event) {
+        return new AddEvents(ImmutableMap.of("data", toEventString(event)));
     }
 
+    public static AddEvents of(List<Event> events) {
+        return new AddEvents(ImmutableMap.of("data", toEventArrayString(events)));
+    }
 
     private static List<String> toEventArrayString(List<Event> events) {
 
@@ -105,7 +101,7 @@ public class AddEvents extends VoidCommand {
     }
 
     @Override
-    public Map<String, Object> getParams() {
+    public ImmutableMap<String, Object> getParams() {
         return this.params;
     }
 

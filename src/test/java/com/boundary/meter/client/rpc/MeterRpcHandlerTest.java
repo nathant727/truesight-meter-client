@@ -1,5 +1,9 @@
 package com.boundary.meter.client.rpc;
 
+import com.boundary.meter.client.command.GetProcessInfo;
+import com.boundary.meter.client.command.GetProcessTopK;
+import com.boundary.meter.client.command.ImmutableTypedExpression;
+import com.boundary.meter.client.command.ImmutableTypedNumber;
 import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.ImmutableEvent;
 import com.boundary.meter.client.model.ImmutableMeasure;
@@ -38,7 +42,58 @@ public class MeterRpcHandlerTest {
         }
 
         for (int i = 0; i < 10; i++) {
+            futures.add(client.systemInformation());
+        }
+
+        for (int i = 0; i < 10; i++) {
             futures.add(client.getServiceListeners());
+        }
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(client.debug("all", i % 3));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(client.getProcessInfo(ImmutableTypedExpression.builder()
+                    .type(GetProcessInfo.TypedExpression.Type.process)
+                    .expression("meter")
+                    .build()));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(client.getProcessInfo(ImmutableTypedExpression.builder()
+                            .expression("kafka")
+                            .type(GetProcessInfo.TypedExpression.Type.args_expr)
+                            .build(),
+                    ImmutableTypedExpression.builder()
+                            .expression("java")
+                            .type(GetProcessInfo.TypedExpression.Type.process)
+                            .build()));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(client.getProcessTopK(ImmutableTypedNumber.builder()
+                    .number(3)
+                    .type(GetProcessTopK.TypedNumber.Type.cpu)
+                    .build()));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(client.getProcessTopK(ImmutableTypedNumber.builder()
+                    .number(2)
+                    .type(GetProcessTopK.TypedNumber.Type.mem)
+                    .build()));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(client.getProcessTopK(ImmutableTypedNumber.builder()
+                            .number(5)
+                            .type(GetProcessTopK.TypedNumber.Type.cpu)
+                            .build(),
+                    ImmutableTypedNumber.builder()
+                            .number(6).
+                            type(GetProcessTopK.TypedNumber.Type.mem)
+                            .build()));
         }
 
         DoubleSupplier ds = new DoubleSupplier() {
@@ -59,22 +114,43 @@ public class MeterRpcHandlerTest {
                 .message("with a message")
                 .build();
 
+        Event e4 =  ImmutableEvent.builder()
+                .title("arrayed - event 2")
+                .message("with a message")
+                .type(Event.Type.critical)
+                .addTags("tag1", "tag2", "tag3")
+                .build();
+
         client.addEvents(ImmutableList.of(e2,e3));
+
+        client.queryMetric("foo.bar", true);
+        client.queryMetric("bar", false);
+
 
         CountDownLatch done = new CountDownLatch(5000);
         Executors.newSingleThreadScheduledExecutor()
                 .scheduleAtFixedRate(() -> {
-                    double val =  ds.getAsDouble();
+                    double val = ds.getAsDouble();
                     client.addMeasures(
                             ImmutableList.of(
-                                    ImmutableMeasure.of("foo.bar", Math.sin(val))
-                                    ,ImmutableMeasure.of("bar.foo", -Math.sin(val))
+                                    ImmutableMeasure.builder()
+                                            .name("foo.bar")
+                                            .value(Math.sin(val))
+                                            .build()
+                                    , ImmutableMeasure.builder()
+                                            .name("bar.foo")
+                                            .source("source2")
+                                            .value(-Math.sin(val))
+                                            .build()
                             )
                     );
-                    client.addMeasure(ImmutableMeasure.of("bar.baz",  val));
+                    client.addMeasure(ImmutableMeasure.builder()
+                            .name("bar.baz")
+                            .value(val)
+                            .source("source3")
+                            .build());
                     done.countDown();
                 }, 0, 1, TimeUnit.SECONDS);
-
 
         for (CompletableFuture<?> future : futures) {
             LOGGER.info(future.get().toString());
