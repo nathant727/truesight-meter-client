@@ -10,7 +10,7 @@ import org.immutables.value.Value;
 public abstract class DebugResponse implements Response {
     public abstract String status();
 
-    public static DebugResponse factory(int id, JsonNode resp) {
+    public static DebugResponse of(int id, JsonNode resp) {
 
         JsonNode result = resp.get("result");
         return ImmutableDebugResponse.builder()
@@ -23,7 +23,7 @@ public abstract class DebugResponse implements Response {
     @Override
     public String toString() {
         return "DebugResponse{" +
-                "meterVersion='" + status() + '\'' +
+                "status='" + status() + '\'' +
                 ", id=" + id() +
                 '}';
     }
