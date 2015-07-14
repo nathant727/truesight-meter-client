@@ -10,13 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Exposes the {@link com.boundary.meter.client.BoundaryMeterClient} api to clients
@@ -34,13 +35,9 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
 
 
     public BoundaryRpcClient(BoundaryRpcClientConfig config) throws Exception {
-
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         this.rpcFactory = () -> new BoundaryNettyRpc(config, workerGroup);
         executor = Executors.newSingleThreadExecutor();
-        this.rpc = rpcFactory.get();
-        rpc.connect();
-        rpc.awaitConnected(1, TimeUnit.SECONDS);
     }
 
     @Override
@@ -138,26 +135,53 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
         return !connectionPending.get()
                 && rpc != null
                 && rpc.isConnected();
+    }
 
+    /**
+     * public connect which should be called by clients
+     * following instantiation
+     * @return true if connected, false otherwise
+     * @throws Exception
+     */
+    public boolean connect() throws Exception {
+        if (connectionPending.compareAndSet(false, true)) {
+            try {
+                return connectSync();
+            } finally {
+                connectionPending.set(false);
+            }
+        }
+        return false;
     }
 
     private void tryReconnect() {
         if (connectionPending.compareAndSet(false, true)) {
             executor.submit(() -> {
-                    rpc = rpcFactory.get();
-                    try {
-                        rpc.connect();
-                        rpc.awaitConnected(1, TimeUnit.SECONDS);
-                    } catch (Exception e) {
-                        LOGGER.error("Exception reconnecting", e);
-                    }
+                try {
+                    this.connectSync();
+                } catch (Exception e) {
+                    LOGGER.error("Exception reconnecting");
+                } finally {
                     connectionPending.set(false);
+                }
 
             });
         }
-
     }
 
+    private boolean connectSync() throws Exception {
+        checkState(connectionPending.get(), "Connection attempted but not marked as pending");
+        rpc = rpcFactory.get();
+        try {
+            rpc.connect();
+            return rpc.awaitConnected(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
     @Override
     public void close() throws InterruptedException {
