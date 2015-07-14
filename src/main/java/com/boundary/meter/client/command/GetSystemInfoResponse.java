@@ -37,53 +37,53 @@ public abstract class GetSystemInfoResponse implements Response {
         infoBuilder.id(id);
         if (result.has("system_info")) {
             JsonNode system_info = result.get("system_info");
-            if (system_info.has("meter_version")) {
-                infoBuilder.meterVersion(result.get("meter_version").asText());
+            if (system_info.has("meterVersion")) {
+                infoBuilder.meterVersion(system_info.get("meterVersion").asText());
             }
             if (system_info.has("hostname")) {
-                infoBuilder.hostname(result.get("hostname").asText());
+                infoBuilder.hostname(system_info.get("hostname").asText());
             }
             if (system_info.has("mach")) {
-                infoBuilder.mach(result.get("mach").asText());
+                infoBuilder.mach(system_info.get("mach").asText());
             }
             if (system_info.has("osver")) {
-                infoBuilder.osver(result.get("osver").asText());
+                infoBuilder.osver(system_info.get("osver").asText());
             }
             if (system_info.has("machdesc")) {
-                infoBuilder.machdesc(result.get("machdesc").asText());
+                infoBuilder.machdesc(system_info.get("machdesc").asText());
             }
             if (system_info.has("osname")) {
-                infoBuilder.osname(result.get("osname").asText());
+                infoBuilder.osname(system_info.get("osname").asText());
             }
             if (system_info.has("arch")) {
-                infoBuilder.arch(result.get("arch").asText());
+                infoBuilder.arch(system_info.get("arch").asText());
             }
             if (system_info.has("version")) {
-                infoBuilder.version(result.get("version").asText());
+                infoBuilder.version(system_info.get("version").asText());
             }
             if (system_info.has("vendname")) {
-                infoBuilder.vendname(result.get("vendname").asText());
+                infoBuilder.vendname(system_info.get("vendname").asText());
             }
             if (system_info.has("patch")) {
-                infoBuilder.patch(result.get("patch").asText());
+                infoBuilder.patch(system_info.get("patch").asText());
             }
             if (system_info.has("cpus")) {
-                infoBuilder.cpus(result.get("cpus"));
+                infoBuilder.cpus(system_info.get("cpus"));
             }
             if (system_info.has("filesystems")) {
-                infoBuilder.filesystems(result.get("filesystems"));
+                infoBuilder.filesystems(system_info.get("filesystems"));
             }
             if (system_info.has("memory")) {
-                infoBuilder.memory(result.get("memory"));
+                infoBuilder.memory(system_info.get("memory"));
             }
             if (system_info.has("interfaces")) {
-                infoBuilder.interfaces(result.get("interfaces"));
+                infoBuilder.interfaces(system_info.get("interfaces"));
             }
             if (system_info.has("discovered_packages")) {
-                infoBuilder.packages(result.get("discovered_packages"));
+                infoBuilder.packages(system_info.get("discovered_packages"));
             }
             if (system_info.has("app_listeners")) {
-                infoBuilder.listeners(result.get("app_listeners"));
+                infoBuilder.listeners(system_info.get("app_listeners"));
             }
         }
         return infoBuilder.build();
@@ -108,13 +108,13 @@ public abstract class GetSystemInfoResponse implements Response {
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode cpu = ite.next();
-                String cpuvend = cpu.get("vendor").asText();
-                String cpumodel = cpu.get("model").asText();
-                String cpumhz = cpu.get("mhz").asText();
-                String cpucache = cpu.get("cacheSize").asText();
-                String cpusockets = cpu.get("totalSockets").asText();
-                String cpucores = cpu.get("totalCores").asText();
-                String cpucorespersocket = cpu.get("coresPerSocket").asText();
+                String cpuvend = cpu.has("vendor") ? cpu.get("vendor").asText() : "";
+                String cpumodel = cpu.has("model") ? cpu.get("model").asText() : "";
+                String cpumhz = cpu.has("mhz") ? cpu.get("mhz").asText() : "";
+                String cpucache = cpu.has("cacheSize") ? cpu.get("cacheSize").asText() : "";
+                String cpusockets = cpu.has("totalSockets") ? cpu.get("totalSockets").asText() : "";
+                String cpucores = cpu.has("totalCores") ? cpu.get("totalCores").asText() : "";
+                String cpucorespersocket = cpu.has("coresPerSocket") ? cpu.get("coresPerSocket").asText() : "";
                 returnVal = returnVal +
                         ", CPU" + i.toString() + " Vendor='" + cpuvend + '\'' +
                         ", CPU" + i.toString() + " Model='" + cpumodel + '\'' +
@@ -133,10 +133,10 @@ public abstract class GetSystemInfoResponse implements Response {
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode filesystem = ite.next();
-                String dirName = filesystem.get("dirName").asText();
-                String devName = filesystem.get("devName").asText();
-                String typeName = filesystem.get("typeName").asText();
-                String sysTypeName = filesystem.get("sysTypeName").asText();
+                String dirName = filesystem.has("dirName") ? filesystem.get("dirName").asText() : "";
+                String devName = filesystem.has("devName") ? filesystem.get("devName").asText() : "";
+                String typeName = filesystem.has("typeName") ? filesystem.get("typeName").asText() : "";
+                String sysTypeName = filesystem.has("sysTypeName") ? filesystem.get("sysTypeName").asText() : "";
                 returnVal = returnVal +
                         ", Filesystem" + i.toString() + " Directory='" + dirName + '\'' +
                         ", Filesystem" + i.toString() + " Device='" + devName + '\'' +
@@ -157,16 +157,16 @@ public abstract class GetSystemInfoResponse implements Response {
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode networkInterface = ite.next();
-                String name = networkInterface.get("name").asText();
-                String type = networkInterface.get("type").asText();
-                String mtu = networkInterface.get("mtu").asText();
-                String driverName = networkInterface.get("driver name").asText();
-                String driverVersion = networkInterface.get("driver vers").asText();
-                String firmwareVersion = networkInterface.get("firmware vers").asText();
-                String ether = networkInterface.get("ether").asText();
-                JsonNode addrs = networkInterface.get("addrs");
-                String flagBits = networkInterface.get("flag_bits").asText();
-                JsonNode flags = networkInterface.get("flags");
+                String name = networkInterface.has("name") ? networkInterface.get("name").asText() : "";
+                String type = networkInterface.has("type") ? networkInterface.get("type").asText() : "";
+                String mtu = networkInterface.has("mtu") ? networkInterface.get("mtu").asText() : "";
+                String driverName = networkInterface.has("driver name") ? networkInterface.get("driver name").asText() : "";
+                String driverVersion = networkInterface.has("driver vers") ? networkInterface.get("driver vers").asText() : "";
+                String firmwareVersion = networkInterface.has("firmware vers") ? networkInterface.get("firmware vers").asText() : "";
+                String ether = networkInterface.has("ether") ? networkInterface.get("ether").asText() : "";
+                JsonNode addrs = networkInterface.has("addrs") ? networkInterface.get("addrs") : null;
+                String flagBits = networkInterface.has("flag_bits") ? networkInterface.get("flag_bits").asText() : "";
+                JsonNode flags = networkInterface.has("flags") ? networkInterface.get("flags") : null;
                 returnVal = returnVal +
                         ", Interface" + i.toString() + " Name='" + name + '\'' +
                         ", Interface" + i.toString() + " Type='" + type + '\'' +
@@ -208,8 +208,8 @@ public abstract class GetSystemInfoResponse implements Response {
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode discoveredPackage = ite.next();
-                String name = discoveredPackage.get("name").asText();
-                String version = discoveredPackage.get("version").asText();
+                String name = discoveredPackage.has("name") ? discoveredPackage.get("name").asText() : "";
+                String version = discoveredPackage.has("version") ? discoveredPackage.get("version").asText() : "";
                 returnVal = returnVal +
                         ", Package" + i.toString() + " Name='" + name + '\'' +
                         ", Package" + i.toString() + " Version='" + version + '\'';
@@ -223,9 +223,9 @@ public abstract class GetSystemInfoResponse implements Response {
             Integer i = 1;
             while (ite.hasNext()) {
                 JsonNode listener = ite.next();
-                String port = listener.get("port").asText();
-                String protocol = listener.get("proto").asText();
-                String process = listener.get("process").asText();
+                String port = listener.has("port") ? listener.get("port").asText() : "";
+                String protocol = listener.has("proto") ? listener.get("proto").asText() : "";
+                String process = listener.has("process") ? listener.get("process").asText() : "";
                 returnVal = returnVal +
                         ", Application Listener" + i.toString() + " Port='" + port + '\'' +
                         ", Application Listener" + i.toString() + " Protocol='" + protocol + '\'' +
