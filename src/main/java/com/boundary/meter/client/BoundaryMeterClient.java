@@ -5,7 +5,6 @@ import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.Measure;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface BoundaryMeterClient extends AutoCloseable {
@@ -29,14 +28,6 @@ public interface BoundaryMeterClient extends AutoCloseable {
     CompletableFuture<GetProcessInfoResponse> getProcessInfo(GetProcessInfo.TypedExpression expression, GetProcessInfo.TypedExpression ... optional);
 
     CompletableFuture<GetProcessTopKResponse> getProcessTopK(GetProcessTopK.TypedNumber number, GetProcessTopK.TypedNumber ... optional);
-
-    CompletableFuture<GetProbeIntervalResponse> getProbeInterval(GetProbeInterval.Type probe);
-
-    CompletableFuture<SetProbeIntervalResponse> setProbeInterval(GetProbeInterval.Type probe, long ms);
-
-    CompletableFuture<SetEnabledMetricsResponse> setEnabledMetrics(SetEnabledMetrics.Type type, boolean enabled);
-
-    CompletableFuture<SetAPIIntervalsResponse> setAPIIntervals(SetAPIIntervals.TypedInterval interval, SetAPIIntervals.TypedInterval ... optional);
 
     CompletableFuture<GetServiceListenersResponse> getServiceListeners();
 }

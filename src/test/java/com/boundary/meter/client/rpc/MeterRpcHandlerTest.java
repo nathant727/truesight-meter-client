@@ -73,44 +73,6 @@ public class MeterRpcHandlerTest {
                         type(GetProcessTopK.TypedNumber.Type.mem)
                         .build()));
 
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.cpu));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.file));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.flow));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.mem));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.net));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.os));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.proc));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.swap));
-        futures.add(client.getProbeInterval(GetProbeInterval.Type.user));
-
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.cpu, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.file, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.flow, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.mem, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.net, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.os, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.proc, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.swap, 1500));
-        futures.add(client.setProbeInterval(GetProbeInterval.Type.user, 1500));
-
-        futures.add(client.setEnabledMetrics(SetEnabledMetrics.Type.core, true));
-        futures.add(client.setEnabledMetrics(SetEnabledMetrics.Type.custom, true));
-
-        futures.add(client.setAPIIntervals(ImmutableTypedInterval.builder()
-                .type(SetAPIIntervals.TypedInterval.Type.config)
-                .interval(15000)
-                .build()));
-        futures.add(client.setAPIIntervals(ImmutableTypedInterval.builder()
-                        .type(SetAPIIntervals.TypedInterval.Type.config)
-                        .interval(15000)
-                        .build(),
-                ImmutableTypedInterval.builder().type(SetAPIIntervals.TypedInterval.Type.logs).interval(60000).build(),
-                ImmutableTypedInterval.builder().type(SetAPIIntervals.TypedInterval.Type.events).interval(35000).build(),
-                ImmutableTypedInterval.builder().type(SetAPIIntervals.TypedInterval.Type.heartbeat).interval(120000).build(),
-                ImmutableTypedInterval.builder().type(SetAPIIntervals.TypedInterval.Type.metrics).interval(1200).build()
-                ));
-
-
         DoubleSupplier ds = new DoubleSupplier() {
             double current = 0;
             @Override
