@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -99,27 +98,7 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
         return send(GetServiceListeners.of());
     }
 
-    @Override
-    public CompletableFuture<GetProbeIntervalResponse> getProbeInterval(GetProbeInterval.Type probe) {
-        return send(GetProbeInterval.of(probe));
-    }
-
-    @Override
-    public CompletableFuture<SetProbeIntervalResponse> setProbeInterval(GetProbeInterval.Type probe, long ms) {
-        return send(SetProbeInterval.of(probe, ms));
-    }
-
-    @Override
-    public CompletableFuture<SetEnabledMetricsResponse> setEnabledMetrics(SetEnabledMetrics.Type type, boolean enabled) {
-        return send(SetEnabledMetrics.of(type, enabled));
-    }
-
-    @Override
-    public CompletableFuture<SetAPIIntervalsResponse> setAPIIntervals(SetAPIIntervals.TypedInterval interval, SetAPIIntervals.TypedInterval ... optional) {
-        return send(SetAPIIntervals.of(interval, optional));
-    }
-
-    private <T extends Response> CompletableFuture<T> send(Command<T> command) {
+    protected  <T extends Response> CompletableFuture<T> send(Command<T> command) {
 
         try {
             if (!connected()) {
