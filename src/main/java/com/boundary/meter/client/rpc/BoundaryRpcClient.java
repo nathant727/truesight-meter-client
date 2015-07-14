@@ -98,7 +98,7 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
         return send(GetServiceListeners.of());
     }
 
-    public <T extends Response> CompletableFuture<T> send(Command<T> command) {
+    protected  <T extends Response> CompletableFuture<T> send(Command<T> command) {
 
         try {
             if (!connected()) {
