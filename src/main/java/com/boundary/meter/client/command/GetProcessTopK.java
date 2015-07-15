@@ -1,6 +1,6 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.boundary.meter.client.response.GetProcessTopKResponse;
 import com.google.common.collect.ImmutableMap;
 import org.immutables.value.Value;
 
@@ -39,10 +39,10 @@ public class GetProcessTopK implements Command<GetProcessTopKResponse> {
         }
         return new GetProcessTopK(paramsBuilder.build());
     }
-    
+
     @Override
-    public GetProcessTopKResponse convertResponse(int id, JsonNode node) {
-        return GetProcessTopKResponse.of(id, node);
+    public Class<GetProcessTopKResponse> getResponseType() {
+        return GetProcessTopKResponse.class;
     }
 
     @Override

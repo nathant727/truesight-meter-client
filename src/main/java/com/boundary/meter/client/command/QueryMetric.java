@@ -1,6 +1,6 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.boundary.meter.client.response.QueryMetricResponse;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -19,8 +19,8 @@ public class QueryMetric implements Command<QueryMetricResponse> {
     }
 
     @Override
-    public QueryMetricResponse convertResponse(int id, JsonNode node) {
-        return QueryMetricResponse.of(id, node);
+    public Class<QueryMetricResponse> getResponseType() {
+        return QueryMetricResponse.class;
     }
 
     @Override

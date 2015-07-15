@@ -2,8 +2,11 @@ package com.boundary.meter.client.rpc;
 
 import com.boundary.meter.client.Json;
 import com.boundary.meter.client.command.Command;
+import com.boundary.meter.client.response.GetSystemInfoResponse;
 import com.boundary.meter.client.command.Identified;
-import com.boundary.meter.client.command.Response;
+import com.boundary.meter.client.response.ImmutableVoidResponse;
+import com.boundary.meter.client.response.Response;
+import com.boundary.meter.client.response.VoidResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,7 +105,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        LOGGER.info("Message received: {}/{}", msg.getClass(), msg.toString());
+        LOGGER.debug("Message received: {}/{}", msg.getClass(), msg.toString());
 
         if (msg instanceof ByteBuf) {
             final ByteBuf buf = ((ByteBuf) msg);
@@ -116,7 +119,17 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                     final CommandAndFuture caf = pendingRequestsById.remove(id);
                     if (caf != null) {
                         try {
-                            Object response = caf.identified.getCommand().convertResponse(id, tree);
+                            Command c = caf.identified.getCommand();
+                            Response response;
+                            Class clazz = c.getResponseType();
+                            if (clazz == VoidResponse.class) {
+                                response = ImmutableVoidResponse.of();
+                            } else if (clazz == GetSystemInfoResponse.class) {
+                                response = mapper.reader(clazz).readValue(tree.get("result").get("system_info"));
+                            } else{
+                                response = mapper.reader(clazz).readValue(tree.get("result"));
+                            }
+
                             if (buf.isReadable()) {
                                 LOGGER.error("{}: Failed to read complete message: {}", meter, ByteBufUtil.hexDump(buf));
                             }

@@ -1,9 +1,7 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.boundary.meter.client.response.DebugResponse;
 import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
 
 /**
  * JSON RPC call to modify debug levels
@@ -21,8 +19,8 @@ public class Debug implements Command<DebugResponse> {
     }
 
     @Override
-    public DebugResponse convertResponse(int id, JsonNode node) {
-        return DebugResponse.of(id, node);
+    public Class<DebugResponse> getResponseType() {
+        return DebugResponse.class;
     }
 
     @Override

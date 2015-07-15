@@ -4,6 +4,7 @@ import com.boundary.meter.client.BoundaryMeterClient;
 import com.boundary.meter.client.command.*;
 import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.Measure;
+import com.boundary.meter.client.response.*;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.slf4j.Logger;

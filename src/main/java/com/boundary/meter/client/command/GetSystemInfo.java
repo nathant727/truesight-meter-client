@@ -1,6 +1,6 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.boundary.meter.client.response.GetSystemInfoResponse;
 
 /**
  * JSON RPC call to retrieve and
@@ -17,9 +17,8 @@ public class GetSystemInfo implements Command<GetSystemInfoResponse> {
     }
 
     @Override
-    public GetSystemInfoResponse convertResponse(int id, JsonNode node) {
-
-        return GetSystemInfoResponse.of(id, node);
+    public Class<GetSystemInfoResponse> getResponseType() {
+        return GetSystemInfoResponse.class;
     }
 
     @Override
