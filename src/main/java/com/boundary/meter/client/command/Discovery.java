@@ -1,7 +1,6 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
+import com.boundary.meter.client.response.DiscoveryResponse;
 
 public class Discovery implements Command<DiscoveryResponse> {
 
@@ -16,8 +15,8 @@ public class Discovery implements Command<DiscoveryResponse> {
     }
 
     @Override
-    public DiscoveryResponse convertResponse(int id, JsonNode node) {
-        return DiscoveryResponse.of(id, node);
+    public Class<DiscoveryResponse> getResponseType() {
+        return DiscoveryResponse.class;
     }
 
     @Override

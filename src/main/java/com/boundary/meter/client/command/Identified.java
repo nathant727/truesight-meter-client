@@ -1,5 +1,6 @@
 package com.boundary.meter.client.command;
 
+import com.boundary.meter.client.response.Response;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 public class Identified<T extends Response> {

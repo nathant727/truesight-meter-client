@@ -3,6 +3,7 @@ package com.boundary.meter.client;
 import com.boundary.meter.client.command.*;
 import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.Measure;
+import com.boundary.meter.client.response.*;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

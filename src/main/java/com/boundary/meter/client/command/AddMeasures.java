@@ -1,6 +1,5 @@
 package com.boundary.meter.client.command;
 
-import com.boundary.meter.client.model.ImmutableMeasure;
 import com.boundary.meter.client.model.Measure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -16,8 +15,6 @@ import static java.util.stream.Collectors.toList;
 
 public class AddMeasures extends VoidCommand {
 
-
-    // see https://docs.google.com/document/d/1tRRaenDy8oImbDqfOgP9Wb7oHxUjDymb-EYqCImlMdo
     private static final String MEASURE_FIELD_FMT = "%s:%s";
     private static final String FIELD_DELIMITER = "|";
 
@@ -65,10 +62,7 @@ public class AddMeasures extends VoidCommand {
         fields.add(format(MEASURE_ID, measure.name().toUpperCase()));
         fields.add(format(VALUE_ID, String.format("%f", measure.value())));
 
-        // TODO: hacking the ms time to seconds for the moment as the meter doesn't
-        // yet handle millisecond resolution. Need to come back and fix this once the meter
-        // is updated
-        fields.add(format(TIMESTAMP_ID, String.valueOf(measure.timestamp().getEpochSecond())));
+        fields.add(format(TIMESTAMP_ID, String.valueOf(measure.timestamp().toEpochMilli())));
 
 
         measure.source().ifPresent(source -> fields.add(format(SOURCE_ID, source)));

@@ -14,8 +14,6 @@ import static java.util.stream.Collectors.toList;
 
 public class AddEvents extends VoidCommand {
 
-
-    // see https://docs.google.com/document/d/1tRRaenDy8oImbDqfOgP9Wb7oHxUjDymb-EYqCImlMdo
     private static final String EVENT_FIELD_FMT = "%s:%s";
     private static final String FIELD_DELIMITER = "|";
 

@@ -1,20 +1,21 @@
 package com.boundary.meter.client.rpc;
 
-import com.boundary.meter.client.command.*;
+import com.boundary.meter.client.command.GetProcessInfo;
+import com.boundary.meter.client.command.GetProcessTopK;
+import com.boundary.meter.client.command.ImmutableTypedExpression;
+import com.boundary.meter.client.command.ImmutableTypedNumber;
 import com.boundary.meter.client.model.Event;
 import com.boundary.meter.client.model.ImmutableEvent;
 import com.boundary.meter.client.model.ImmutableMeasure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.DoubleSupplier;
 
 public class MeterRpcHandlerTest {
 
@@ -22,121 +23,132 @@ public class MeterRpcHandlerTest {
 
     public static void main(String[] args) throws Exception {
 
+
         BoundaryRpcClientConfig config = new BoundaryRpcClientConfig();
         config.setLoggingEnabled(true);
-        BoundaryRpcClient client = new BoundaryRpcClient(config);
-        List<CompletableFuture<?>> futures = Lists.newArrayList();
 
-        Event e = ImmutableEvent.builder()
-                .title("rpcHandler test starting (no message)")
-                .message("rpcHandler test is starting")
-                .build();
-
-        client.addEvent(e);
+        try (BoundaryRpcClient client = new BoundaryRpcClient(config)) {
 
 
-        futures.add(client.discovery());
-        futures.add(client.systemInformation());
-        futures.add(client.getServiceListeners());
-        futures.add(client.debug("all", 1));
-        futures.add(client.getProcessInfo(ImmutableTypedExpression.builder()
-                .type(GetProcessInfo.TypedExpression.Type.process)
-                .expression("meter")
-                .build()));
-        futures.add(client.debug("all", 0));
+            client.connect();
+            List<CompletableFuture<?>> futures = Lists.newArrayList();
 
-        futures.add(client.getProcessInfo(ImmutableTypedExpression.builder()
-                        .expression("kafka")
-                        .type(GetProcessInfo.TypedExpression.Type.args_expr)
-                        .build(),
-                ImmutableTypedExpression.builder()
-                        .expression("java")
-                        .type(GetProcessInfo.TypedExpression.Type.process)
-                        .build()));
+            Event e = ImmutableEvent.builder()
+                    .title("rpcHandler test starting (no message)")
+                    .message("rpcHandler test is starting")
+                    .build();
 
-        futures.add(client.getProcessTopK(ImmutableTypedNumber.builder()
-                .number(3)
-                .type(GetProcessTopK.TypedNumber.Type.cpu)
-                .build()));
+            client.addEvent(e);
+            Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
 
-        futures.add(client.getProcessTopK(ImmutableTypedNumber.builder()
-                .number(2)
-                .type(GetProcessTopK.TypedNumber.Type.mem)
-                .build()));
+            postFuture(client.discovery(), futures);
 
-        futures.add(client.getProcessTopK(ImmutableTypedNumber.builder()
-                        .number(5)
-                        .type(GetProcessTopK.TypedNumber.Type.cpu)
-                        .build(),
-                ImmutableTypedNumber.builder()
-                        .number(6).
-                        type(GetProcessTopK.TypedNumber.Type.mem)
-                        .build()));
+            postFuture(client.systemInformation(), futures);
+            postFuture(client.getServiceListeners(), futures);
+            postFuture(client.debug("all", 1), futures);
+            postFuture(client.getProcessInfo(ImmutableTypedExpression.builder()
+                    .type(GetProcessInfo.TypedExpression.Type.process)
+                    .expression(".*meter")
+                    .build()), futures);
+            postFuture(client.debug("all", 0),futures );
 
-        DoubleSupplier ds = new DoubleSupplier() {
-            double current = 0;
-            @Override
-            public double getAsDouble() {
-                return current+=.05;
-            }
-        };
+            postFuture(client.getProcessInfo(ImmutableTypedExpression.builder()
+                            .expression("kafka")
+                            .type(GetProcessInfo.TypedExpression.Type.args_expr)
+                            .build(),
+                    ImmutableTypedExpression.builder()
+                            .expression("java")
+                            .type(GetProcessInfo.TypedExpression.Type.process)
+                            .build()),futures );
 
-        Event e2 =  ImmutableEvent.builder()
-                .title("arrayed - event 0")
-                .type(Event.Type.warn)
-                .build();
+            postFuture(client.getProcessTopK(ImmutableTypedNumber.builder()
+                    .number(3)
+                    .type(GetProcessTopK.TypedNumber.Type.cpu)
+                    .build()), futures);
 
-        Event e3 =  ImmutableEvent.builder()
-                .title("arrayed - event 1")
-                .message("with a message")
-                .build();
+            postFuture(client.getProcessTopK(ImmutableTypedNumber.builder()
+                    .number(2)
+                    .type(GetProcessTopK.TypedNumber.Type.mem)
+                    .build()), futures);
 
-        Event e4 =  ImmutableEvent.builder()
-                .title("arrayed - event 2")
-                .message("with a message")
-                .type(Event.Type.critical)
-                .addTags("tag1", "tag2", "tag3")
-                .build();
-
-        client.addEvents(ImmutableList.of(e2,e3));
-
-        client.queryMetric("foo.bar", true);
-        client.queryMetric("bar", false);
+            postFuture(client.getProcessTopK(ImmutableTypedNumber.builder()
+                            .number(5)
+                            .type(GetProcessTopK.TypedNumber.Type.cpu)
+                            .build(),
+                    ImmutableTypedNumber.builder()
+                            .number(6).
+                            type(GetProcessTopK.TypedNumber.Type.mem)
+                            .build()), futures);
 
 
-        CountDownLatch done = new CountDownLatch(5000);
-        Executors.newSingleThreadScheduledExecutor()
-                .scheduleAtFixedRate(() -> {
-                    double val = ds.getAsDouble();
-                    client.addMeasures(
-                            ImmutableList.of(
-                                    ImmutableMeasure.builder()
-                                            .name("foo.bar")
-                                            .value(Math.sin(val))
-                                            .build()
-                                    , ImmutableMeasure.builder()
-                                            .name("bar.foo")
-                                            .source("source2")
-                                            .value(-Math.sin(val))
-                                            .build()
-                            )
-                    );
-                    client.addMeasure(ImmutableMeasure.builder()
-                            .name("bar.baz")
-                            .value(val)
-                            .source("source3")
-                            .build());
-                    done.countDown();
-                }, 0, 1, TimeUnit.SECONDS);
 
-        for (CompletableFuture<?> future : futures) {
-            LOGGER.info(future.get().toString());
+
+
+
+            postFuture(client.queryMetric("foo.bar", true), futures);
+            postFuture(client.queryMetric("bar", false), futures);
+
+
+
+
+            Event e2 = ImmutableEvent.builder()
+                    .title("arrayed - event 0")
+                    .type(Event.Type.warn)
+                    .build();
+
+            Event e3 = ImmutableEvent.builder()
+                    .title("arrayed - event 1")
+                    .message("with a message")
+                    .build();
+
+            client.addEvents(ImmutableList.of(e2, e3));
+
+            double val = 0.5;
+            client.addMeasures(
+                    ImmutableList.of(
+                            ImmutableMeasure.builder()
+                                    .name("foo.bar")
+                                    .value(Math.sin(val))
+                                    .build()
+                            , ImmutableMeasure.builder()
+                                    .name("bar.foo")
+                                    .source("source2")
+                                    .value(-Math.sin(val))
+                                    .build()
+                    )
+            );
+            client.addMeasure(ImmutableMeasure.builder()
+                    .name("bar.baz")
+                    .value(val)
+                    .source("source3")
+                    .build());
+
+
+            futures.forEach(future -> {
+
+                try {
+                    future.get(1, TimeUnit.SECONDS);
+                } catch (Exception e1) {
+
+                    LOGGER.error("Exception waiting for response: ", e1);
+                }
+
+            });
+
+
+        } catch (Exception e) {
+            LOGGER.error("ex", e);
+            System.exit(1);
+
         }
+        System.exit(0);
 
-        done.await();
-            client.close();
+    }
 
-
+    private static void postFuture(CompletableFuture<?> future, List<CompletableFuture<?>> futures) {
+        futures.add(future.thenAccept(o -> LOGGER.info("completed: {}", o.toString())));
+        // needed for the moment because of https://boundary.jira.com/browse/METER-575
+        Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
     }
 
 }

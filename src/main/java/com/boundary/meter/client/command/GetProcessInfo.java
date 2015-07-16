@@ -1,6 +1,6 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.boundary.meter.client.response.GetProcessInfoResponse;
 import com.google.common.collect.ImmutableMap;
 import org.immutables.value.Value;
 
@@ -40,9 +40,10 @@ public class GetProcessInfo implements Command<GetProcessInfoResponse> {
         return new GetProcessInfo(paramsBuilder.build());
     }
 
+
     @Override
-    public GetProcessInfoResponse convertResponse(int id, JsonNode node) {
-        return GetProcessInfoResponse.of(id, node);
+    public Class<GetProcessInfoResponse> getResponseType() {
+        return GetProcessInfoResponse.class;
     }
 
     @Override

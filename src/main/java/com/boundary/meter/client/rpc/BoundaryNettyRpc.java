@@ -2,7 +2,7 @@ package com.boundary.meter.client.rpc;
 
 
 import com.boundary.meter.client.command.Command;
-import com.boundary.meter.client.command.Response;
+import com.boundary.meter.client.response.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Throwables;
 import com.google.common.net.HostAndPort;

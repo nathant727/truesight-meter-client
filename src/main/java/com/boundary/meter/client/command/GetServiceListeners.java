@@ -1,6 +1,6 @@
 package com.boundary.meter.client.command;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.boundary.meter.client.response.GetServiceListenersResponse;
 
 public class GetServiceListeners implements Command<GetServiceListenersResponse> {
 
@@ -16,8 +16,8 @@ public class GetServiceListeners implements Command<GetServiceListenersResponse>
     }
 
     @Override
-    public GetServiceListenersResponse convertResponse(int id, JsonNode node) {
-        return GetServiceListenersResponse.of(id, node);
+    public Class<GetServiceListenersResponse> getResponseType() {
+        return GetServiceListenersResponse.class;
     }
 
     @Override
