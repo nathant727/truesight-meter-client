@@ -88,8 +88,8 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
     }
 
     @Override
-    public CompletableFuture<QueryMetricResponse> queryMetric(String metric, boolean Exact) {
-        return send(QueryMetric.of(metric, Exact));
+    public CompletableFuture<QueryMetricResponse> queryMetric(String metric, boolean exact) {
+        return send(QueryMetric.of(metric, exact));
     }
 
     @Override

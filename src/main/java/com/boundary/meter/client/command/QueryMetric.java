@@ -14,8 +14,8 @@ public class QueryMetric implements Command<QueryMetricResponse> {
         this.params = params;
     }
 
-    public static QueryMetric of(String metric, boolean Exact) {
-        return new QueryMetric(ImmutableMap.of(Exact ? "name" : "match", metric));
+    public static QueryMetric of(String metric, boolean exact) {
+        return new QueryMetric(ImmutableMap.of(exact ? "name" : "match", metric));
     }
 
     @Override

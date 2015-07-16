@@ -1,6 +1,6 @@
 package com.boundary.meter.client.response;
 
-import com.boundary.meter.client.response.model.TopKEntry;
+import com.boundary.meter.client.response.model.ProcessEntry;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
@@ -13,12 +13,12 @@ public abstract class GetProcessTopKResponse implements Response {
 
     public abstract String status();
 
-    public abstract Map<String, List<TopKEntry>> processes();
+    public abstract Map<String, List<ProcessEntry>> processes();
 
-    public List<TopKEntry> cpu_topk() {
+    public List<ProcessEntry> cpu_topk() {
         return processes().get("cpu_topk");
     }
-    public List<TopKEntry> mem_topk() {
+    public List<ProcessEntry> mem_topk() {
         return processes().get("mem_topk");
     }
 
