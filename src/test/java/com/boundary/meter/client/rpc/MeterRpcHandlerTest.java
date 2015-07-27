@@ -38,8 +38,7 @@ public class MeterRpcHandlerTest {
                     .message("rpcHandler test is starting")
                     .build();
 
-            client.addEvent(e);
-            Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+            postFuture( client.addEvent(e), futures);
 
             postFuture(client.discovery(), futures);
 

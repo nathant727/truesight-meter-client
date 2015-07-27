@@ -71,6 +71,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
         ctx.close();
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Response> CompletableFuture<T> sendCommand(Command<T> command) throws DisconnectedException, JsonProcessingException {
         final ChannelHandlerContext ctx = ctxRef.get();
         if (ctx == null) {
@@ -80,8 +81,11 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
         final int id = this.idRef.getAndIncrement();
         final Identified<T> identified = new Identified<>(command, id);
         LOGGER.debug("sendCommand: {}", identified);
-        final CompletableFuture<T> future = new CompletableFuture<>();
-        pendingRequestsById.put(id, new CommandAndFuture<>(identified, future));
+        final CompletableFuture<T> future = new CompletableFuture<T>();
+
+        CommandAndFuture<T> caf = new CommandAndFuture<>(identified, future);
+        pendingRequestsById.put(id, caf);
+
         writeToChannel(ctx.channel(), identified).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
@@ -89,6 +93,11 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                     LOGGER.debug("Request id {} operation completed unsuccessfully {}", id, channelFuture.cause());
                     pendingRequestsById.remove(id);
                     future.completeExceptionally(channelFuture.cause());
+                }
+
+                if (command.getResponseType() == VoidResponse.class) {
+                    pendingRequestsById.remove(id);
+                    caf.future.complete((T) ImmutableVoidResponse.of());
                 }
             }
         });
@@ -121,10 +130,8 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                         try {
                             Command c = caf.identified.getCommand();
                             Response response;
-                            Class clazz = c.getResponseType();
-                            if (clazz == VoidResponse.class) {
-                                response = ImmutableVoidResponse.of();
-                            } else if (clazz == GetSystemInfoResponse.class) {
+                            final Class clazz = c.getResponseType();
+                            if (clazz == GetSystemInfoResponse.class) {
                                 response = mapper.reader(clazz).readValue(tree.get("result").get("systemInfo"));
                             } else{
                                 response = mapper.reader(clazz).readValue(tree.get("result"));
