@@ -9,8 +9,9 @@ import org.immutables.value.Value;
 public abstract class ProcessEntry {
 
     public abstract int pid();
+    public abstract int ppid();
     public abstract String name();
-    public abstract String arg();
+    public abstract String arg0();
     @JsonProperty("cpu_pct")
     public abstract double cpuPct();
     @JsonProperty("mem_pct")

@@ -7,8 +7,8 @@ public class GetServiceListeners implements Command<GetServiceListenersResponse>
 
     private static final GetServiceListeners INSTANCE = new GetServiceListeners();
 
-    public GetServiceListeners() {
-
+    private GetServiceListeners() {
+        // singleton
     }
 
     public static GetServiceListeners of() {

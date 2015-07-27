@@ -125,7 +125,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                             if (clazz == VoidResponse.class) {
                                 response = ImmutableVoidResponse.of();
                             } else if (clazz == GetSystemInfoResponse.class) {
-                                response = mapper.reader(clazz).readValue(tree.get("result").get("system_info"));
+                                response = mapper.reader(clazz).readValue(tree.get("result").get("systemInfo"));
                             } else{
                                 response = mapper.reader(clazz).readValue(tree.get("result"));
                             }

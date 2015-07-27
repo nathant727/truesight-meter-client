@@ -1,8 +1,6 @@
 package com.boundary.meter.client.response.model;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
@@ -18,19 +16,15 @@ public abstract class Interface {
     public abstract int mtu();
     public abstract Optional<String> ether();
 
-    @JsonProperty("driver name")
     public abstract Optional<String> driverName();
 
-    @JsonProperty("driver vers")
     public abstract Optional<String> driverVersion();
 
-    @JsonProperty("firmware vers")
     public abstract Optional<String>  firmwareVersion();
 
-    // todo parse these "addrs":["127.0.0.1/8","::1","fe80:1::1"]
-    public abstract List<JsonNode> addrs();
+    // todo parse these -- "addrs":["127.0.0.1/8","::1","fe80:1::1"]
+    public abstract List<String> addrs();
 
-    @JsonProperty("flag_bits")
     public abstract int flagBits();
 
     public abstract List<String> flags();

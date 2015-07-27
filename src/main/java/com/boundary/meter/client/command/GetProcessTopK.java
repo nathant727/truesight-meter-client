@@ -21,7 +21,10 @@ public class GetProcessTopK implements Command<GetProcessTopKResponse> {
         public Type type() {
             return Type.cpu;
         }
-        public abstract int number();
+        @Value.Default
+        public int number() {
+            return 10;
+        }
     }
 
     private ImmutableMap<String, Object> params;
