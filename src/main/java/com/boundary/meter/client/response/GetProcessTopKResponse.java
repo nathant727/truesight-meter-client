@@ -16,10 +16,10 @@ public abstract class GetProcessTopKResponse implements Response {
     public abstract Map<String, List<ProcessEntry>> processes();
 
     public List<ProcessEntry> cpu_topk() {
-        return processes().get("cpu_topk");
+        return processes().get("cpuTopk");
     }
     public List<ProcessEntry> mem_topk() {
-        return processes().get("mem_topk");
+        return processes().get("memTopk");
     }
 
 }
