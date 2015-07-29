@@ -121,6 +121,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
 
             try {
                 // todo: look into a streaming data parser here if needed for speed
+                // todo: handle rpc error codes
                 JsonNode tree = mapper.readTree( new ByteBufInputStream(buf) );
                 JsonNode idField = tree.get("id");
                 if (idField != null) {
@@ -129,13 +130,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                     if (caf != null) {
                         try {
                             Command c = caf.identified.getCommand();
-                            Response response;
-                            final Class clazz = c.getResponseType();
-                            if (clazz == GetSystemInfoResponse.class) {
-                                response = mapper.reader(clazz).readValue(tree.get("result").get("systemInfo"));
-                            } else{
-                                response = mapper.reader(clazz).readValue(tree.get("result"));
-                            }
+                            Response response = mapper.reader(c.getResponseType()).readValue(tree.get("result"));
 
                             if (buf.isReadable()) {
                                 LOGGER.error("{}: Failed to read complete message: {}", meter, ByteBufUtil.hexDump(buf));
