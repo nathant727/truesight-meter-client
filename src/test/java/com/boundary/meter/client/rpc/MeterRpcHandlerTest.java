@@ -9,7 +9,6 @@ import com.boundary.meter.client.model.ImmutableEvent;
 import com.boundary.meter.client.model.ImmutableMeasure;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
