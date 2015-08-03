@@ -34,7 +34,7 @@ public class MeterRpcHandlerTest {
             List<CompletableFuture<?>> futures = Lists.newArrayList();
 
             Event e = ImmutableEvent.builder()
-                    .title("rpcHandler test starting (no message)")
+                    .title("rpcHandler test starting NOW")
                     .message("rpcHandler test is starting")
                     .build();
 
@@ -146,8 +146,6 @@ public class MeterRpcHandlerTest {
 
     private static void postFuture(CompletableFuture<?> future, List<CompletableFuture<?>> futures) {
         futures.add(future.thenAccept(o -> LOGGER.info("completed: {}", o.toString())));
-        // needed for the moment because of https://boundary.jira.com/browse/METER-575
-        Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
     }
 
 }
