@@ -4,7 +4,7 @@
 
     <groupId>com.boundary</groupId>
     <artifactId>meter-client</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.5</version>
 
 
     <properties>
@@ -137,7 +137,7 @@
 
     <scm>
         <connection>scm:git:ssh://git@vcs.boundary.us-west-2/services/boundary-meter-client.git</connection>
-        <tag>meter-client-0.4</tag>
+        <tag>meter-client-0.5</tag>
     </scm>
 
 </project>
