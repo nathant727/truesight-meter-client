@@ -4,7 +4,7 @@
 
     <groupId>com.boundary</groupId>
     <artifactId>meter-client</artifactId>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
 
 
     <properties>
