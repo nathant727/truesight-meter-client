@@ -2,7 +2,6 @@ package com.boundary.meter.client.rpc;
 
 import com.boundary.meter.client.Json;
 import com.boundary.meter.client.command.Command;
-import com.boundary.meter.client.response.GetSystemInfoResponse;
 import com.boundary.meter.client.command.Identified;
 import com.boundary.meter.client.response.ImmutableVoidResponse;
 import com.boundary.meter.client.response.Response;
