@@ -66,7 +66,7 @@ public class AddEvents extends VoidCommand {
         final ImmutableList.Builder<String> fields = ImmutableList.builder();
 
         fields.add(format(TITLE_ID, event.title()));
-        fields.add(format(TYPE_ID, event.type().name()));
+        fields.add(format(TYPE_ID, event.severity().name()));
 
         // TODO: hacking the ms time to seconds for the moment as the meter doesn't
         // yet handle millisecond resolution. Need to come back and fix this once the meter

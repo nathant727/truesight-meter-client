@@ -78,20 +78,12 @@ public class MeterRpcHandlerTest {
                             type(GetProcessTopK.TypedNumber.Type.mem)
                             .build()), futures);
 
-
-
-
-
-
             postFuture(client.queryMetric("foo.bar", true), futures);
             postFuture(client.queryMetric("bar", false), futures);
 
-
-
-
             Event e2 = ImmutableEvent.builder()
                     .title("arrayed - event 0")
-                    .type(Event.Type.warn)
+                    .severity(Event.Severity.warn)
                     .build();
 
             Event e3 = ImmutableEvent.builder()
@@ -132,7 +124,6 @@ public class MeterRpcHandlerTest {
                 }
 
             });
-
 
         } catch (Exception e) {
             LOGGER.error("ex", e);

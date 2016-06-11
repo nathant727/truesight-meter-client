@@ -63,7 +63,7 @@ public class AddEventsTest {
     private void validateEventString(Event e, String eventString) {
 
         assertTrue(eventString.startsWith("_bevent:" + e.title().replaceAll("\\|", "\\\\|") + "|"));
-        assertTrue(eventString.contains("t:" + e.type().name()));
+        assertTrue(eventString.contains("t:" + e.severity().name()));
         assertTrue(eventString.contains("d:" + e.timestamp().getEpochSecond()));
 
         validateOptionalEventString(e.message(), "m", eventString);
@@ -98,7 +98,7 @@ public class AddEventsTest {
         return ImmutableEvent.builder()
                 .title("awesome event")
                 .message("hey now some stuff (and a pipe |)")
-                .type(Event.Type.error)
+                .severity(Event.Severity.error)
                 .source("saucy.fire")
                 .ad("ad stuff")
                 .at("at stuff")

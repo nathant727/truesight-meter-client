@@ -34,7 +34,6 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
     private final ExecutorService executor;
     private volatile BoundaryNettyRpc rpc;
 
-
     public BoundaryRpcClient(BoundaryRpcClientConfig config) throws Exception {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         this.rpcFactory = () -> new BoundaryNettyRpc(config, workerGroup);
@@ -70,7 +69,6 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
     public CompletableFuture<GetSystemInfoResponse> systemInformation() {
         return send(GetSystemInfo.of());
     }
-
 
     @Override
     public CompletableFuture<DebugResponse> debug(String section, int level) {
@@ -170,6 +168,4 @@ public class BoundaryRpcClient implements BoundaryMeterClient {
             rpc.close();
         }
     }
-
-
 }

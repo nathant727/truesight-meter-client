@@ -15,14 +15,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 public abstract class Event {
 
 
-    public enum Type {
+    public enum Severity {
         info, warn, error, critical
     }
 
     public abstract String title();
     @Value.Default
-    public Type type() {
-        return Type.info;
+    public Severity severity() {
+        return Severity.info;
     }
     @Value.Default
     public Instant timestamp() {
@@ -41,17 +41,17 @@ public abstract class Event {
                 .build();
     }
 
-    public static Event of(String title, Type type) {
+    public static Event of(String title, Severity severity) {
         return ImmutableEvent.builder()
                 .title(title)
-                .type(type)
+                .severity(severity)
                 .build();
     }
 
-    public static Event of(String title, Type type, String message) {
+    public static Event of(String title, Severity severity, String message) {
         return ImmutableEvent.builder()
                 .title(title)
-                .type(type)
+                .severity(severity)
                 .message(message)
                 .build();
     }

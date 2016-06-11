@@ -6,8 +6,6 @@ import io.netty.handler.logging.LogLevel;
 
 public class BoundaryRpcClientConfig {
 
-
-
     @JsonProperty
     private HostAndPort meter = HostAndPort.fromParts("localhost", 9192);
 

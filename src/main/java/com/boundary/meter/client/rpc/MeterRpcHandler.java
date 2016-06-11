@@ -129,7 +129,7 @@ public class MeterRpcHandler extends ChannelInboundHandlerAdapter {
                     if (caf != null) {
                         try {
                             Command c = caf.identified.getCommand();
-                            Response response = mapper.reader(c.getResponseType()).readValue(tree.get("result"));
+                            Response response = mapper.readerFor(c.getResponseType()).readValue(tree.get("result"));
 
                             if (buf.isReadable()) {
                                 LOGGER.error("{}: Failed to read complete message: {}", meter, ByteBufUtil.hexDump(buf));
