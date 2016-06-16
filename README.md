@@ -1,4 +1,4 @@
-# boundary-meter-client
+# truesight-meter-client
 
 A java library for interacting with the TrueSight Pulse meter.
 
@@ -17,7 +17,7 @@ By default it is expected that a meter process is running locally.
 ```xml
 
     <dependency>
-        <groupId>com.boundary</groupId>
+        <groupId>com.bmc.truesight.saas</groupId>
         <artifactId>meter-client</artifactId>
         <version>0.7</version>
     </dependency>
@@ -28,9 +28,9 @@ By default it is expected that a meter process is running locally.
 ## Create the client
 
 ```java
-        BoundaryRpcClientConfig config = new BoundaryRpcClientConfig();
+        TruesightMeterRpcClientConfig config = new TruesightMeterRpcClientConfig();
         // set config values if you are running the meter on non-standard host/port
-        BoundaryRpcClient client = new BoundaryRpcClient(config);
+        TruesightMeterRpcClient client = new TruesightMeterRpcClient(config);
         client.connect();
 ```
 
