@@ -1,6 +1,6 @@
 # truesight-meter-client
 
-A java library for interacting with the TrueSight Pulse meter.
+A java library for interacting with the TrueSight meter.
 
 # Motivation
 
