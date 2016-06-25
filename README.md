@@ -19,7 +19,7 @@ By default it is expected that a meter process is running locally.
     <dependency>
         <groupId>com.bmc.truesight.saas</groupId>
         <artifactId>meter-client</artifactId>
-        <version>0.7</version>
+        <version>0.8</version>
     </dependency>
 ```
 
