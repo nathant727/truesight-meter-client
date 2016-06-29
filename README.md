@@ -37,8 +37,15 @@ By default it is expected that a meter process is running locally.
 ## Add Measurements
 
 ```java
-        Measure measure = Measure.of("my-measurement", 2.3);
+        Measure measure = Measure.of("my_measurement", 2.3);
         client.addMeasure(measure);
+```
+
+## Add Events
+
+```java
+        Event myEvent = Event.of("Test Even", Severity.warn);
+        client.addEvent(myEvent);
 ```
 
 # Tests
