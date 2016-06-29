@@ -44,7 +44,7 @@ By default it is expected that a meter process is running locally.
 ## Add Events
 
 ```java
-        Event myEvent = Event.of("Test Even", Severity.warn);
+        Event myEvent = Event.of("Test Event", Severity.warn);
         client.addEvent(myEvent);
 ```
 
