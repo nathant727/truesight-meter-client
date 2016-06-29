@@ -26,6 +26,7 @@ public class AddEvents extends VoidCommand {
     private static final String TAGS_ID = "tags";
     private static final String AT_ID = "at";
     private static final String AD_ID = "ad";
+    private static final String PROPERTIES_ID = "properties";
 
 
     private static final Predicate<String> hasPipes = Pattern.compile("\\" + FIELD_DELIMITER).asPredicate();
@@ -86,6 +87,7 @@ public class AddEvents extends VoidCommand {
 
         event.at().ifPresent(at -> fields.add(format(AT_ID, at)));
         event.ad().ifPresent(ad -> fields.add(format(AD_ID, ad)));
+        event.properties().ifPresent(pMap -> fields.add(format(PROPERTIES_ID, pMap.toString().substring(1, pMap.toString().length() - 1))));
         return fields.build().stream().collect(joining(FIELD_DELIMITER));
     }
 
