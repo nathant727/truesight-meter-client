@@ -25,7 +25,7 @@ public abstract class Measure {
     /**
      * Creates a Measure using the required parameters: name and value.
      * The timestamp for this Measure defaults to <a href="https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html#now--">Instant.now()</a>.
-     * The source of the event will be the Fully Qualified Domain Name of the meter host.
+     * The source of the event will be the meter name.
      * @param name  the name of the Metric displayed in Pulse (must not be greater than 100 characters in length).
      * @param value the value for this Metric.
      * @return an Immutable Measure with the name and value given.
@@ -39,7 +39,7 @@ public abstract class Measure {
 
     /**
      * Creates a Measure using the required parameters: name, value and timestamp.  The source of the event will be the
-     * Fully Qualified Domain Name of the meter host.
+     * meter name.
      *
      * @param name      the name of the Metric displayed in Pulse (must not be greater than 100 characters in length).
      * @param value     the value for this Metric.
