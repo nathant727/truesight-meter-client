@@ -4,7 +4,9 @@ import com.bmc.truesight.saas.meter.client.model.Event;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -85,9 +87,20 @@ public class AddEvents extends VoidCommand {
             fields.add(format(TAGS_ID, tagStr));
         }
 
-        event.at().ifPresent(at -> fields.add(format(AT_ID, at)));
-        event.ad().ifPresent(ad -> fields.add(format(AD_ID, ad)));
-        event.properties().ifPresent(pMap -> fields.add(format(PROPERTIES_ID, pMap.toString().substring(1, pMap.toString().length() - 1))));
+        event.appDataType().ifPresent(at -> fields.add(format(AT_ID, at)));
+        event.appData().ifPresent(ad -> fields.add(format(AD_ID, ad)));
+        if (event.properties() != null) {
+            StringBuilder propsStrBldr = new StringBuilder(event.properties().toString().length());
+            Iterator propsIter = event.properties().entrySet().iterator();
+            while (propsIter.hasNext()) {
+                Map.Entry pair = (Map.Entry) propsIter.next();
+                propsStrBldr.append(pair.getKey() + "=" + pair.getValue());
+                if (propsIter.hasNext()) {
+                    propsStrBldr.append(", ");
+                }
+            }
+            fields.add(format(PROPERTIES_ID, propsStrBldr.toString()));
+        }
         return fields.build().stream().collect(joining(FIELD_DELIMITER));
     }
 
