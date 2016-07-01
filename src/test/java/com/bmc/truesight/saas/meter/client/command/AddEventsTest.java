@@ -71,9 +71,9 @@ public class AddEventsTest {
         validateOptionalEventString(e.message(), "m", eventString);
         validateOptionalEventString(e.source(), "h", eventString);
         validateOptionalEventString(e.sender(), "s", eventString);
-        validateOptionalEventString(e.at(), "at", eventString);
+        validateOptionalEventString(e.appDataType(), "at", eventString);
 
-        validateOptionalEventString(e.ad(), "ad", eventString);
+        validateOptionalEventString(e.appData(), "ad", eventString);
 
         if (e.tags().isEmpty()) {
             assertFalse(eventString.contains("|tags:" + e.tags().stream().collect(joining(","))));
@@ -102,8 +102,8 @@ public class AddEventsTest {
                  .message("hey now some stuff (and a pipe |)")
                  .severity(Event.Severity.error)
                  .source("saucy.fire")
-                 .ad("ad stuff")
-                 .at("at stuff")
+                 .appData("ad stuff")
+                 .appDataType("at stuff")
                  .sender("the sender")
                  .properties(immutableMap)
                  .tags(ImmutableSet.of("tag1", "tag2"));
